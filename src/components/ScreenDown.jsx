@@ -12,6 +12,7 @@ export function ScreenDown({ pressed, onClick, label = "낮은화면용 버튼" 
       onClick={onClick}
       aria-pressed={pressed} // 접근성: 버튼 상태 알림
       aria-label={label} // 접근성: 버튼 역할과 상태 알림
+      pressed={pressed}
     >
       {pressed ? (
         <FaAngleDoubleUp size={36} />
@@ -36,7 +37,7 @@ const BigButton = styled.button`
   width: 100%;
   height: 100%;
   border: none;
-  background: #252552; // 버튼 배경색
+  background: rgba(255, 255, 255, 0.15); // 흰색 15% 투명
   color: #fff; // 버튼 글자색
   display: flex;
   justify-content: center; // 가로 중앙 정렬
@@ -44,4 +45,6 @@ const BigButton = styled.button`
   gap: 12px;
   font-size: 40px;
   font-weight: 500;
+  border-radius: ${({ pressed }) =>
+    pressed ? "0 0 30px 30px" : "30px 30px 0 0"};
 `;

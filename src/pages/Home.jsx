@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { ScreenDown, ScreenDownPanel } from "../components/ScreenDown";
-import HomeContent from "../components/HomeContent";
+import HomeContent from "../components/home/HomeContent";
 
 export default function Home() {
   const [flipped, setFlipped] = useState(false);
