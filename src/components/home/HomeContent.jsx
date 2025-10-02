@@ -20,10 +20,10 @@ export default function HomeContent({ onToggleHC, onToggleLarge }) {
       </Toolbar>
 
       <Actions>
-        <Link to="/move-in" aria-label="주민등록등본 발급으로 이동">
+        <Link to="/move-in/step-1" aria-label="주민등록등본 발급으로 이동">
           <ActionButton as="div">주민등록등본 발급</ActionButton>
         </Link>
-        <Link to="/move-in" aria-label="전입신고서 작성으로 이동">
+        <Link to="/move-in/step-1" aria-label="전입신고서 작성으로 이동">
           <ActionButton as="div">전입신고서 작성</ActionButton>
         </Link>
       </Actions>
