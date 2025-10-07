@@ -3,10 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { MOVEIN_STEPS } from "../../features/movein/config";
 import ProcessLayout from "../../layouts/ProcessLayout";
 import { useMoveInStore } from "../../store/moveInStore";
+import { SERVICE_OPTIONS } from "../../features/movein/config";
+import CheckboxList from "../../components/inputs/CheckboxList";
 
 export default function Step5() {
   const navigate = useNavigate();
-  const { data, setField /*, validateStep1*/ } = useMoveInStore();
+  const { data, setField } = useMoveInStore();
 
   const onPrev = () => {
     navigate("../step-4");
@@ -21,7 +23,16 @@ export default function Step5() {
       onPrev={onPrev}
       onComplete={onComplete}
     >
-      <FormWrap></FormWrap>
+      <FormWrap>
+        <CheckboxList
+          options={SERVICE_OPTIONS}
+          values={data.services || []}
+          onChange={(next) => setField("services", next)}
+          name="movein-services"
+          legend="부가 서비스 선택"
+          gap={30}
+        />
+      </FormWrap>
     </ProcessLayout>
   );
 }
