@@ -40,8 +40,8 @@ const HomeButton = styled.button`
   height: 70px;
   padding: 0 24px;
   border-radius: 24px;
-  font-size: clamp(24px, 1.8vw, 38px);
-  font-weight: 500;
+  font-size: clamp(38px, 1.8vw, 42px);
+  font-weight: 400;
 
   background: transparent;
   color: ${({ theme }) => theme.colors.deepDark};
@@ -57,8 +57,8 @@ const PrimaryButton = styled.button`
   padding: 0 24px;
   border-radius: 24px;
   border: none;
-  font-weight: 500;
-  font-size: clamp(24px, 1.8vw, 38px);
+  font-weight: 400;
+  font-size: clamp(38px, 1.8vw, 42px);
 
   background: ${({ theme }) => theme.colors.dark};
   color: ${({ theme }) => theme.colors.white};
