@@ -10,6 +10,7 @@ export default function ProcessLayout({
   current,
   onNext,
   onPrev,
+  onComplete,
   homeTo,
   rightSlot,
 }) {
@@ -24,7 +25,12 @@ export default function ProcessLayout({
           </ScrollableArea>
 
           <NavRow>
-            <WizardNav onNext={onNext} onPrev={onPrev} homeTo={homeTo} />
+            <WizardNav
+              onNext={onNext}
+              onPrev={onPrev}
+              onComplete={onComplete}
+              homeTo={homeTo}
+            />
           </NavRow>
         </LeftCol>
 

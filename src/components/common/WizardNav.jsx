@@ -1,8 +1,9 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
+import { FaCheck } from "react-icons/fa";
 
-export default function WizardNav({ onPrev, onNext }) {
+export default function WizardNav({ onPrev, onNext, onComplete }) {
   return (
     <NavWrap>
       <Link to="/" aria-label="홈으로">
@@ -21,6 +22,14 @@ export default function WizardNav({ onPrev, onNext }) {
           <span>다음</span>
           <FaAngleRight aria-hidden="true" />
         </PrimaryButton>
+      ) : (
+        <></>
+      )}
+      {onComplete ? (
+        <CompleteButton type="button" onClick={onComplete} aria-label="완료">
+          <span>완료</span>
+          <FaCheck aria-hidden="true" />
+        </CompleteButton>
       ) : (
         <></>
       )}
@@ -62,5 +71,20 @@ const PrimaryButton = styled.button`
 
   background: ${({ theme }) => theme.colors.dark};
   color: ${({ theme }) => theme.colors.white};
-  &[aria-disabled="true"],
+`;
+
+const CompleteButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: 70px;
+  padding: 0 24px;
+  border-radius: 24px;
+  border: none;
+  font-weight: 400;
+  font-size: clamp(38px, 1.8vw, 42px);
+
+  background: ${({ theme }) => theme.colors.highlight};
+  color: ${({ theme }) => theme.colors.white};
 `;

@@ -4,23 +4,23 @@ import { MOVEIN_STEPS } from "../../features/movein/config";
 import ProcessLayout from "../../layouts/ProcessLayout";
 import { useMoveInStore } from "../../store/moveInStore";
 
-export default function Step2() {
+export default function Step4() {
   const navigate = useNavigate();
   const { data, setField /*, validateStep1*/ } = useMoveInStore();
 
   const onNext = () => {
     // if (!validateStep1()) return;
-    navigate("../step-3");
+    navigate("../step-5");
   };
   const onPrev = () => {
-    navigate("../step-1");
+    navigate("../step-3");
   };
 
   return (
     <ProcessLayout
-      title="전입사유를 선택해주세요"
+      title="이사 후 거주지 정보를 입력해주세요"
       steps={MOVEIN_STEPS}
-      current={2}
+      current={4}
       onNext={onNext}
       onPrev={onPrev}
     >
