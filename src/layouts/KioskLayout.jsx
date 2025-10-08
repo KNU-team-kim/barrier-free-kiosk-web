@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import styled from "styled-components";
-import { ScreenDown, ScreenDownPanel } from "../components/ScreenDown";
+import { ScreenDown, ScreenDownPanel } from "../components/common/ScreenDown";
 import { useUI } from "../hooks/useUI";
 
 export default function KioskLayout() {

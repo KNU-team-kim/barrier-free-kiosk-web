@@ -29,20 +29,20 @@ export default function NumberInput({
 }
 
 const Input = styled.input`
-  border: 3px solid transparent;
-  outline: none;
   width: 100%;
-  height: 108px;
+  padding: 30px 24px;
+  outline: none;
+  border: 3px solid transparent;
   border-radius: 24px;
+  font-size: clamp(40px, 1.4vw, 44px);
+  font-weight: 500;
+  box-sizing: border-box;
+
   background: ${({ theme }) => theme.colors.white};
   color: ${({ theme }) => theme.colors.deepDark};
-  padding: 0 16px;
-  font-size: clamp(38px, 2vw, 48px);
-  font-weight: 500;
   text-align: ${({ $align }) => $align};
-  box-sizing: border-box;
-  &:focus,
-  &:focus-visible {
+
+  &:focus {
     border-color: ${({ theme }) => theme.colors.highlight};
     border-width: 3px;
     outline: none;

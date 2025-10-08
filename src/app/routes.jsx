@@ -11,7 +11,6 @@ import Step5 from "../pages/movein/Step5";
 
 export const router = createBrowserRouter([
   {
-    // 공용 레이아웃(Viewport/Screen/ScreenDown)
     element: (
       <UIProvider>
         <KioskLayout />

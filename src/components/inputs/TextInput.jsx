@@ -8,6 +8,7 @@ export default function TextInput({
   id,
   maxLength,
 }) {
+  // 한글, 영문, 공백만 허용
   const handleChange = (e) => {
     onChange?.(e.target.value);
   };
@@ -27,19 +28,18 @@ export default function TextInput({
 }
 
 const Input = styled.input`
-  border: 3px solid transparent;
-  outline: none;
   width: 100%;
-  height: 108px;
+  padding: 30px 24px;
+  outline: none;
+  border: 3px solid transparent;
   border-radius: 24px;
-  background: ${({ theme }) => theme.colors.white};
-  color: ${({ theme }) => theme.colors.deepDark};
-  padding: 0 20px;
-  font-size: clamp(38px, 2vw, 48px);
+  font-size: clamp(40px, 1.4vw, 44px);
   font-weight: 500;
   box-sizing: border-box;
-  &:focus,
-  &:focus-visible {
+
+  background: ${({ theme }) => theme.colors.white};
+  color: ${({ theme }) => theme.colors.deepDark};
+  &:focus {
     border-color: ${({ theme }) => theme.colors.highlight};
     border-width: 3px;
     outline: none;

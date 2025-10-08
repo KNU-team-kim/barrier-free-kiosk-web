@@ -12,6 +12,7 @@ const themes = {
       white: "#ffffff",
       black: "#000000",
       highlight: "#ff6200",
+      label: "#ededed",
     },
   },
   high: {
@@ -24,6 +25,7 @@ const themes = {
       white: "#ffffff",
       black: "#000000",
       highlight: "#ff6200",
+      label: "#ededed",
     },
   },
 };
