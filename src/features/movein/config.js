@@ -23,6 +23,13 @@ export const SERVICE_OPTIONS = [
   "사회적 배려 대상자를 위한 요금감면 일괄신청",
 ];
 
+export const BUILDING_TYPES = ["지상", "지하"];
+
+export const HOUSEHOLD_FORMATION_TYPE = [
+  "이사온 사람끼리 세대 구성 (빈집으로 이사)",
+  "이사온 곳에 기존에 살고 있는 세대주가 있는 경우",
+];
+
 export const SIGUNGU = {
   서울특별시: [
     "강남구",
