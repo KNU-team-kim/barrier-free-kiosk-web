@@ -37,8 +37,8 @@ const BigButton = styled.button`
   width: 100%;
   height: 100%;
   border: none;
-  background: rgba(255, 255, 255, 0.15); // 흰색 15% 투명
-  color: #fff; // 버튼 글자색
+  background: ${({ theme }) => theme.colors.dark}; // 흰색 15% 투명
+  color: ${({ theme }) => theme.colors.white}; // 버튼 글자색
   display: flex;
   justify-content: center; // 가로 중앙 정렬
   align-items: center; // 세로 중앙 정렬

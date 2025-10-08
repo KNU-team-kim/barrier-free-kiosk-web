@@ -1,4 +1,36 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import Home from "../pages/Home";
+import KioskLayout from "../layouts/KioskLayout";
+import { UIProvider } from "./providers/UIProvider";
 
-export const router = createBrowserRouter([{ path: "/", element: <Home /> }]);
+import Step1 from "../pages/movein/Step1";
+import Step2 from "../pages/movein/Step2";
+import Step3 from "../pages/movein/Step3";
+import Step4 from "../pages/movein/Step4";
+import Step5 from "../pages/movein/Step5";
+
+export const router = createBrowserRouter([
+  {
+    element: (
+      <UIProvider>
+        <KioskLayout />
+      </UIProvider>
+    ),
+    children: [
+      { path: "/", element: <Home /> }, // 홈
+      {
+        path: "/move-in",
+        // element: <MoveInLayout />,      // 선택: 전입신고 전용 레이아웃(사이드 스텝퍼 등)
+        children: [
+          { index: true, element: <Navigate to="step-1" replace /> },
+          { path: "step-1", element: <Step1 /> },
+          { path: "step-2", element: <Step2 /> },
+          { path: "step-3", element: <Step3 /> },
+          { path: "step-4", element: <Step4 /> },
+          { path: "step-5", element: <Step5 /> },
+        ],
+      },
+      { path: "*", element: <Navigate to="/" replace /> },
+    ],
+  },
+]);
