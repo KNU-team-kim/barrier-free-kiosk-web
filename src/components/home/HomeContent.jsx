@@ -2,75 +2,128 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { softCard } from "../../styles/mixins";
 import TimeInfo from "./TimeInfo";
+import useThemeMode from "../../hooks/useThemeMode";
+import { FaCheck } from "react-icons/fa6";
 
 export default function HomeContent({ onToggleHC, onToggleLarge }) {
+  const { mode, setMode } = useThemeMode();
+
+  const isLight = mode === "light";
+  const isHigh = mode === "high";
+
   return (
-    <TopArea>
-      <Toolbar aria-label="빠른 설정">
-        <TimeInfo />
-        <ToolButtonGroup>
-          <ToolButton onClick={onToggleHC} aria-pressed={false}>
-            고대비
-          </ToolButton>
-          <ToolButton aria-label="음성 안내">음성</ToolButton>
-          <ToolButton onClick={onToggleLarge} aria-pressed={false}>
-            큰글자
-          </ToolButton>
-        </ToolButtonGroup>
+    <HomeWrap>
+      <Toolbar aria-label="화면 모드 설정">
+        <ToolButton
+          onClick={() => setMode("light")}
+          aria-pressed={isLight}
+          data-active={isLight}
+          aria-label="일반 모드"
+        >
+          {isLight && <FaCheck aria-hidden="true" />}
+          일반
+        </ToolButton>
+        <ToolButton
+          onClick={() => setMode("high")}
+          aria-pressed={isHigh}
+          data-active={isHigh}
+          aria-label="고대비 모드"
+        >
+          {isHigh && <FaCheck aria-hidden="true" />}
+          고대비
+        </ToolButton>
+        <ToolButton
+          onClick={onToggleLarge}
+          aria-pressed={false}
+          data-active={false}
+          aria-label="큰글자 모드"
+        >
+          큰글자
+        </ToolButton>
+        <ToolButton aria-label="음성 안내" data-active={false}>
+          음성
+        </ToolButton>
       </Toolbar>
+      <Divider role="separator" aria-hidden />
+      <TimeInfo />
 
       <Actions>
-        <Link to="/move-in/step-1" aria-label="주민등록등본 발급으로 이동">
-          <ActionButton as="div">주민등록등본 발급</ActionButton>
-        </Link>
-        <Link to="/move-in/step-1" aria-label="전입신고서 작성으로 이동">
-          <ActionButton as="div">전입신고서 작성</ActionButton>
-        </Link>
+        <ActionItem align="right">
+          <Link to="/move-in/step-1" aria-label="주민등록등본 발급으로 이동">
+            <ActionButton>
+              <IconWrap>
+                <IconCircle>🖨️</IconCircle>
+              </IconWrap>
+              <Label>
+                주민등록등본
+                <br />
+                발급하기
+              </Label>
+            </ActionButton>
+          </Link>
+        </ActionItem>
+
+        <ActionItem align="left">
+          <Link to="/move-in/step-1" aria-label="전입신고서 작성으로 이동">
+            <ActionButton>
+              <IconWrap>
+                <IconCircle>🖊️</IconCircle>
+              </IconWrap>
+              <Label>
+                전입신고서
+                <br />
+                작성하기
+              </Label>
+            </ActionButton>
+          </Link>
+        </ActionItem>
       </Actions>
 
-      <InfoCard role="region" aria-label="공공정보 - 날씨">
-        공공정보 - 날씨
-      </InfoCard>
-    </TopArea>
+      <InfoCard role="region" aria-label="공공정보 - 날씨"></InfoCard>
+    </HomeWrap>
   );
 }
 
-/* ---------- styled ---------- */
-const TopArea = styled.div`
+const HomeWrap = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 15px;
   padding: 32px 24px;
 `;
 
+/* Top Toolbar */
 const Toolbar = styled.nav`
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
-  align-items: flex-start; // 좌, 우 요소 높이가 달라도 자연스럽게 하기위해 설정.
-`;
-
-const ToolButtonGroup = styled.div`
-  margin-left: auto; // 이 한 줄로 오른쪽 정렬
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap; // 필요 시 다음 줄로 내려가도록
-  align-items: center;
 `;
 
 const ToolButton = styled.button`
-  ${softCard}
-  width: 140px;
-  height: 64px;
-  font-size: 24px;
+  padding: 10px 20px;
+  min-width: 140px;
+  font-size: 38px;
   font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  color: ${({ theme }) => theme.colors.deepDark};
+  background: transparent;
+  border: 2px solid ${({ theme }) => theme.colors.dark};
+  border-radius: 24px;
+  &[data-active="true"] {
+    color: ${({ theme }) => theme.colors.white};
+    background: ${({ theme }) => theme.colors.dark};
+    border-color: transparent;
+  }
 `;
 
+/* Main Buttons */
 const Actions = styled.section`
-  display: flex;
-  flex-wrap: wrap; // 한 줄에 다 못들어가는 아이템은 줄바꿈.
-  gap: 24px; // 아이템 사이 간격
-  justify-content: space-between; // 아이템들을 양 끝으로 정렬하고, 남는 공간을 아이템 사이에 균등 분배.
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
 
   /* 자식이 a 태그일 때 */
   a {
@@ -81,16 +134,65 @@ const Actions = styled.section`
   }
 `;
 
-const ActionButton = styled.button`
-  ${softCard}
-  width: 100%;
-  height: 88px;
-  font-size: 28px;
-  font-weight: 500;
-  display: grid;
-  place-items: center;
+const ActionItem = styled.div`
+  display: flex;
+  justify-content: ${({ align }) =>
+    align === "right" ? "flex-end" : "flex-start"};
 `;
 
+const ActionButton = styled.button`
+  width: 100%;
+  max-width: 360px;
+  min-height: 388px;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 10px;
+
+  border: 1px solid ${({ theme }) => theme.colors.deepDark};
+  border-radius: 24px;
+  background: transparent;
+  color: ${({ theme }) => theme.colors.deepDark};
+  font-size: 40px;
+  font-weight: 500;
+  line-height: 1.2;
+  padding: 40px;
+  text-align: center;
+
+  transition: background 0.2s;
+  &:hover {
+    background: ${({ theme }) => theme.colors.lightGray};
+  }
+`;
+
+// 아이콘 배경 원
+const IconWrap = styled.div`
+  flex: 1; /* 아이콘 위쪽 여백 확보 */
+  display: flex;
+  align-items: flex-start;
+  justify-content: left;
+`;
+
+const IconCircle = styled.div`
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: ${({ theme }) => theme.colors.label};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  color: ${({ theme }) => theme.colors.deepDark};
+`;
+
+// 텍스트는 버튼 하단 중앙에
+const Label = styled.div`
+  display: flex;
+  align-items: flex-end;
+  text-align: left;
+  line-height: 1.2;
+`;
+
+/* Info Card */
 const InfoCard = styled.section`
   ${softCard}
   display: grid;
@@ -99,4 +201,11 @@ const InfoCard = styled.section`
   font-size: 36px;
   font-weight: 500;
   margin-top: auto; // 요소를 가능한 아래쪽 끝으로 내림
+`;
+
+const Divider = styled.hr`
+  margin: 32px 0;
+  height: 1px;
+  border: 0;
+  background: ${({ theme }) => theme.colors.lightGray};
 `;

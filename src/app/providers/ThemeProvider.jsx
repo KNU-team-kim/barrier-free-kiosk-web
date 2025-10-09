@@ -1,5 +1,7 @@
 import { ThemeProvider as StyledProvider } from "styled-components";
 import GlobalStyle from "../../styles/GlobalStyle";
+import ThemeModeContext from "../contexts/ThemeModeContext";
+import { useMemo, useState } from "react";
 
 const themes = {
   light: {
@@ -31,12 +33,15 @@ const themes = {
 };
 
 export default function ThemeProvider({ children }) {
-  const mode = "light"; // 추후 state로 교체 가능
+  const [mode, setMode] = useState("light");
+  const value = useMemo(() => ({ mode, setMode }), [mode]);
 
   return (
-    <StyledProvider theme={themes[mode]}>
-      <GlobalStyle />
-      {children}
-    </StyledProvider>
+    <ThemeModeContext.Provider value={value}>
+      <StyledProvider theme={themes[mode]}>
+        <GlobalStyle />
+        {children}
+      </StyledProvider>
+    </ThemeModeContext.Provider>
   );
 }
