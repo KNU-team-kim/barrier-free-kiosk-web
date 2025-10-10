@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import styled from "styled-components";
 
 export default function NumberInput({
@@ -8,22 +9,58 @@ export default function NumberInput({
   id,
   maxLength = 4,
   align = "left",
+  inputRef,
+  onBackspaceAtStart,
+  onFilled,
+  ref: forwardedRef,
+  type = "text",
+  ...rest
 }) {
+  const innerRef = useRef(null);
+
+  const attachRef = (node) => {
+    innerRef.current = node;
+
+    // React 19 방식 ref
+    if (forwardedRef) {
+      if (typeof forwardedRef === "function") forwardedRef(node);
+      else if (typeof forwardedRef === "object") forwardedRef.current = node;
+    }
+
+    // 기존 inputRef 옵션도 지원
+    if (inputRef) {
+      if (typeof inputRef === "function") inputRef(node);
+      else if (typeof inputRef === "object") inputRef.current = node;
+    }
+  };
+
   const handleChange = (e) => {
     const next = e.target.value.replace(/\D/g, "").slice(0, maxLength);
     onChange?.(next);
+    if (onFilled && next.length === maxLength) onFilled(next);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Backspace" && (value ?? "").length === 0) {
+      onBackspaceAtStart?.();
+    }
   };
 
   return (
     <Input
+      ref={attachRef}
       id={id}
       value={value}
       onChange={handleChange}
+      onKeyDown={handleKeyDown}
       placeholder={placeholder}
       aria-label={ariaLabel}
       inputMode="numeric"
       autoComplete="off"
       $align={align}
+      maxLength={maxLength}
+      type={type}
+      {...rest}
     />
   );
 }
