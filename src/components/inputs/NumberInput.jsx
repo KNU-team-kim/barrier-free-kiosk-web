@@ -14,6 +14,7 @@ export default function NumberInput({
   onFilled,
   ref: forwardedRef,
   type = "text",
+  suffix,
   ...rest
 }) {
   const innerRef = useRef(null);
@@ -45,6 +46,29 @@ export default function NumberInput({
       onBackspaceAtStart?.();
     }
   };
+  if (suffix) {
+    return (
+      <InputWrapper>
+        <Input
+          ref={attachRef}
+          id={id}
+          value={value}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          placeholder={placeholder}
+          aria-label={ariaLabel}
+          inputMode="numeric"
+          autoComplete="off"
+          $align={align}
+          $hasSuffix={true}
+          maxLength={maxLength}
+          type={type}
+          {...rest}
+        />
+        <Suffix>{suffix}</Suffix>
+      </InputWrapper>
+    );
+  }
 
   return (
     <Input
@@ -64,10 +88,15 @@ export default function NumberInput({
     />
   );
 }
+const InputWrapper = styled.div`
+  position: relative;
+  width: 100%;
+`;
 
 const Input = styled.input`
   width: 100%;
   padding: 30px 24px;
+  padding-right: ${({ $hasSuffix }) => ($hasSuffix ? "80px" : "24px")};
   outline: none;
   border: 3px solid transparent;
   border-radius: 24px;
@@ -84,4 +113,15 @@ const Input = styled.input`
     border-width: 3px;
     outline: none;
   }
+`;
+
+const Suffix = styled.span`
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: clamp(40px, 1.4vw, 44px);
+  font-weight: 500;
+  color: ${({ theme }) => theme.colors.deepDark};
+  pointer-events: none; /* 클릭 방지 */
 `;

@@ -119,7 +119,7 @@ const FieldBlock = styled.div`
 
 const FieldLabel = styled.label`
   font-size: clamp(38px, 1.6vw, 48px);
-  font-weight: 500;
+  font-weight: 400;
   color: ${({ theme }) => theme.colors.dark};
 `;
 
