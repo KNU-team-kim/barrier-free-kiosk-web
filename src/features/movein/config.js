@@ -15,6 +15,15 @@ export const REASON_OPTIONS = [
   "자연환경: 건강, 공해, 전원생활 등",
 ];
 
+export const reasonMap = {
+  "직업: 취업, 사업, 직장이전 등": "JOB",
+  "가족: 가족과 함께 거주, 결혼, 분가 등": "FAMILY",
+  "주택: 주택 구입, 계약 만료, 집세, 재개발 등": "HOUSE",
+  "교육: 진학, 학업, 자녀교육 등": "EDUCATION",
+  "주거환경: 교통, 문화, 편의시설 등": "ENVIRONMENT",
+  "자연환경: 건강, 공해, 전원생활 등": "NATURE",
+};
+
 export const SERVICE_OPTIONS = [
   "이/통장 등의 사후확인 생략 및 주택 임대차계약 신고(확정일자 의제)를 위한 서류제출",
   "우편물 주소 이전 서비스 신청",

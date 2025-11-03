@@ -12,6 +12,8 @@ import RegiStep1 from "../pages/regicert/RegiStep1";
 import RegiStep2 from "../pages/regicert/RegiStep2";
 import RegiStep3 from "../pages/regicert/RegiStep3";
 import RegiStep4 from "../pages/regicert/RegiStep4";
+import MoveInComplete from "../pages/movein/MoveInComplete";
+import RegiComplete from "../pages/regicert/RegiComplete";
 
 export const router = createBrowserRouter([
   {
@@ -32,6 +34,7 @@ export const router = createBrowserRouter([
           { path: "step-3", element: <Step3 /> },
           { path: "step-4", element: <Step4 /> },
           { path: "step-5", element: <Step5 /> },
+          { path: "complete", element: <MoveInComplete /> },
         ],
       },
       {
@@ -42,6 +45,7 @@ export const router = createBrowserRouter([
           { path: "step-2", element: <RegiStep2 /> },
           { path: "step-3", element: <RegiStep3 /> },
           { path: "step-4", element: <RegiStep4 /> },
+          { path: "complete", element: <RegiComplete /> },
         ],
       },
       { path: "*", element: <Navigate to="/" replace /> },

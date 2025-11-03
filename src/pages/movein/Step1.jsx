@@ -8,10 +8,9 @@ import { MOVEIN_STEPS } from "../../features/movein/config";
 
 export default function Step1() {
   const navigate = useNavigate();
-  const { data, setField /*, validateStep1*/ } = useMoveInStore();
+  const { data, setField } = useMoveInStore();
 
   const onNext = () => {
-    // if (!validateStep1()) return;
     navigate("../step-2");
   };
 

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { MOVEIN_STEPS } from "../../features/movein/config";
+import { MOVEIN_STEPS, reasonMap } from "../../features/movein/config";
 import ProcessLayout from "../../layouts/ProcessLayout";
 import { useMoveInStore } from "../../store/moveInStore";
 import { REASON_OPTIONS } from "../../features/movein/config";
@@ -29,8 +29,12 @@ export default function Step2() {
         <Section aria-labelledby="reason-legend">
           <RadioList
             options={REASON_OPTIONS}
-            value={data.reasonCategory || ""}
-            onChange={(v) => setField("reasonCategory", v)}
+            value={data.reasonCategoryLabel || ""}
+            onChange={(label) => {
+              const code = reasonMap[label] || "";
+              setField("reasonCategory", code); // 서버용 enum 저장
+              setField("reasonCategoryLabel", label); // 화면 표시용 (선택사항)
+            }}
             name="movein-reason"
             legend="전입 사유"
             gap={30}

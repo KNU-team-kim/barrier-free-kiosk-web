@@ -4,10 +4,10 @@ import { MOVEIN_STEPS, SIGUNGU } from "../../features/movein/config";
 import ProcessLayout from "../../layouts/ProcessLayout";
 import { useMoveInStore } from "../../store/moveInStore";
 import { useMemo } from "react";
-import { fetchPreviousAddress } from "../../services/moveInApi";
 import SelectInput from "../../components/inputs/SelectInput";
 import ActionButton from "../../components/common/ActionButton";
 import LabelText from "../../components/common/LabelText";
+import { getMoveInAddress } from "../../api/moveIn";
 
 export default function Step3() {
   const navigate = useNavigate();
@@ -35,35 +35,58 @@ export default function Step3() {
     setPrevAddrState({ sido: next, sigungu: "" });
   };
   const changeSigungu = (e) => setPrevAddrField("sigungu", e.target.value);
+
+  // Step3 컴포넌트 내부에 추가/교체
   const onSearch = async () => {
-    const phone = getFullPhone();
-    if (!applicantName || !phone || !sido || !sigungu) {
-      setPrevAddrState({
-        error: "성명/휴대폰/시도/시군구를 모두 선택/입력해주세요.",
-        result: null,
-      });
+    const name = (applicantName || "").trim();
+    const phoneNumber = getFullPhone();
+
+    if (!name) {
+      alert("신청자 이름을 먼저 입력해 주세요.");
       return;
     }
-    setPrevAddrState({ loading: true, error: null, result: null });
+    if (!phoneNumber) {
+      alert("휴대폰 번호를 먼저 입력해 주세요.");
+      return;
+    }
+
     try {
-      const dataRes = await fetchPreviousAddress({
-        name: applicantName,
-        phone,
-        sido,
-        sigungu,
-      });
-      if (dataRes?.address) {
-        setPrevAddrState({
-          result: { address: dataRes.address },
-          loading: false,
-        });
-      } else {
-        setPrevAddrState({ result: { notFound: true }, loading: false });
+      setPrevAddrState({ loading: true, error: null, result: null });
+      // 주소 조회
+      const data = await getMoveInAddress({ name, phoneNumber });
+      // data: { sido, sigungu, roadName, buildingNumber, detail }
+
+      if (!data || (!data.sido && !data.sigungu && !data.roadName)) {
+        // 응답이 비정상/빈 케이스: notFound 처리
+        setPrevAddrState({ loading: false, result: { notFound: true } });
+        return;
       }
-    } catch (err) {
+
+      // 화면용 address 문자열 생성
+      const addressStr = [
+        data.sido,
+        data.sigungu,
+        data.roadName,
+        data.buildingNumber ? String(data.buildingNumber) : "",
+        data.detail || "",
+      ]
+        .filter(Boolean)
+        .join(" ");
+
+      // store에 반영 (시/도·시군구 셀렉트도 동기화)
       setPrevAddrState({
-        error: err.message || "조회 중 오류가 발생했습니다.",
         loading: false,
+        error: null,
+        result: { address: addressStr },
+        sido: data.sido || "",
+        sigungu: data.sigungu || "",
+      });
+    } catch (e) {
+      console.error(e);
+      setPrevAddrState({
+        loading: false,
+        error: e,
+        result: { notFound: true },
       });
     }
   };
