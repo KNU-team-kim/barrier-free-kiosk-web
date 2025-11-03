@@ -45,7 +45,6 @@ export default function Step4() {
       }).open();
     } catch (e) {
       console.error(e);
-      // 필요 시 토스트/에러표시
     }
   };
 

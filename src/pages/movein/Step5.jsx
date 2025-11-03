@@ -5,15 +5,25 @@ import ProcessLayout from "../../layouts/ProcessLayout";
 import { useMoveInStore } from "../../store/moveInStore";
 import { SERVICE_OPTIONS } from "../../features/movein/config";
 import CheckboxList from "../../components/inputs/CheckboxList";
+import { postMoveIn } from "../../api/moveIn";
 
 export default function Step5() {
   const navigate = useNavigate();
-  const { data, setField } = useMoveInStore();
+  const { data, setField, buildMoveInPayload, reset } = useMoveInStore();
 
   const onPrev = () => {
     navigate("../step-4");
   };
-  const onComplete = () => {};
+  const onComplete = async () => {
+    const payload = buildMoveInPayload();
+    console.log("[MoveIn] request payload:", payload);
+
+    const res = await postMoveIn(payload);
+    console.log("[MoveIn] response:", res);
+
+    reset();
+    navigate("../complete");
+  };
 
   return (
     <ProcessLayout

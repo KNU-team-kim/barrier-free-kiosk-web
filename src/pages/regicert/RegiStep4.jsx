@@ -12,7 +12,9 @@ export default function RegiStep4() {
   const onPrev = () => {
     navigate("../step-3");
   };
-  const onComplete = () => {};
+  const onComplete = () => {
+    navigate("../complete");
+  };
 
   return (
     <ProcessLayout
