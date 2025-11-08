@@ -14,10 +14,9 @@ export default function Step3() {
   const { data, setPrevAddrField, setPrevAddrState, getFullPhone } =
     useMoveInStore();
   const { applicantName } = data;
-  const { sido, sigungu, loading, error, result } = data.prevAddr;
+  const { sido, sigungu, loading, result } = data.prevAddr;
 
   const onNext = () => {
-    // if (!validateStep1()) return;
     navigate("../step-4");
   };
   const onPrev = () => {
@@ -36,11 +35,9 @@ export default function Step3() {
   };
   const changeSigungu = (e) => setPrevAddrField("sigungu", e.target.value);
 
-  // Step3 컴포넌트 내부에 추가/교체
   const onSearch = async () => {
     const name = (applicantName || "").trim();
     const phoneNumber = getFullPhone();
-
     if (!name) {
       alert("신청자 이름을 먼저 입력해 주세요.");
       return;
@@ -52,12 +49,9 @@ export default function Step3() {
 
     try {
       setPrevAddrState({ loading: true, error: null, result: null });
-      // 주소 조회
       const data = await getMoveInAddress({ name, phoneNumber });
-      // data: { sido, sigungu, roadName, buildingNumber, detail }
 
       if (!data || (!data.sido && !data.sigungu && !data.roadName)) {
-        // 응답이 비정상/빈 케이스: notFound 처리
         setPrevAddrState({ loading: false, result: { notFound: true } });
         return;
       }
@@ -67,7 +61,8 @@ export default function Step3() {
         data.sido,
         data.sigungu,
         data.roadName,
-        data.buildingNumber ? String(data.buildingNumber) : "",
+        data.mainBuildingNumber ? String(data.mainBuildingNumber) : "",
+        data.subBuildingNumber ? String(data.subBuildingNumber) : "",
         data.detail || "",
       ]
         .filter(Boolean)
@@ -75,11 +70,15 @@ export default function Step3() {
 
       // store에 반영 (시/도·시군구 셀렉트도 동기화)
       setPrevAddrState({
+        sido: data.sido || "",
+        sigungu: data.sigungu || "",
+        roadName: data.roadName || "",
+        mainBuildingNumber: data.mainBuildingNumber || null,
+        subBuildingNumber: data.subBuildingNumber || null,
+        detail: data.detail || "",
         loading: false,
         error: null,
         result: { address: addressStr },
-        sido: data.sido || "",
-        sigungu: data.sigungu || "",
       });
     } catch (e) {
       console.error(e);

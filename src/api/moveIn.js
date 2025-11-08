@@ -15,7 +15,7 @@ export async function getMoveInAddress({ phoneNumber, name }) {
   const { data } = await client.get("/move-in/address", {
     params: { phoneNumber, name },
   });
-  return data; // { sido, sigungu, roadName, buildingNumber, detail }
+  return data; // { sido, sigungu, roadName, mainBuildingNumber, subBuildingNumber, detail }
 }
 
 // 전입신고 제출

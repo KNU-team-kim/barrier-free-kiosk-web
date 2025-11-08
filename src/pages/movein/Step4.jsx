@@ -3,50 +3,48 @@ import { useNavigate } from "react-router-dom";
 
 import ProcessLayout from "../../layouts/ProcessLayout";
 import {
-  BUILDING_TYPES,
-  HOUSEHOLD_FORMATION_TYPE,
+  buildingTypeMap,
+  householdFormationTypeMap,
   MOVEIN_STEPS,
+  SIGUNGU,
 } from "../../features/movein/config";
 
 import { useMoveInStore } from "../../store/moveInStore";
-import ActionButton from "../../components/common/ActionButton";
 import LabelText from "../../components/common/LabelText";
 import SelectInput from "../../components/inputs/SelectInput";
 import NumberInput from "../../components/inputs/NumberInput";
 import TextInput from "../../components/inputs/TextInput";
 import RadioList from "../../components/inputs/RadioList";
-import { ensureDaumPostcode } from "../../services/daumPostcode";
+import { useMemo } from "react";
 
 export default function Step4() {
   const navigate = useNavigate();
-  const { data, setField } = useMoveInStore();
-
+  const { data, setNewAddrField, setNewAddrState } = useMoveInStore();
   const {
-    baseAddress = "",
-    buildingType = "", // "지상" | "지하"
-    mainNumber = "", // 본번
-    subNumber = "", // 부번
-    extraAddress = "",
-    householdMethod = "", // 세대 구성 방법
-  } = data;
+    sido,
+    sigungu,
+    roadName,
+    buildingType,
+    mainBuildingNumber,
+    subBuildingNumber,
+    detail,
+    sedaeju,
+  } = data.newAddr;
 
   const onPrev = () => navigate("../step-3");
   const onNext = () => navigate("../step-5");
 
-  const openAddressSearch = async () => {
-    try {
-      await ensureDaumPostcode();
-      new window.daum.Postcode({
-        oncomplete: function (data) {
-          // 도로명/지번 우선순위는 서비스 정책에 맞게 조정 가능
-          const addr = data.roadAddress || data.jibunAddress || "";
-          if (addr) setField("baseAddress", addr);
-        },
-      }).open();
-    } catch (e) {
-      console.error(e);
-    }
+  const sidoOptions = useMemo(() => Object.keys(SIGUNGU || {}), []);
+  const sigunguOptions = useMemo(
+    () => (sido ? SIGUNGU[sido] || [] : []),
+    [sido]
+  );
+
+  const changeSido = (e) => {
+    const next = e.target.value;
+    setNewAddrState({ sido: next, sigungu: "" });
   };
+  const changeSigungu = (e) => setNewAddrField("sigungu", e.target.value);
 
   return (
     <ProcessLayout
@@ -59,21 +57,35 @@ export default function Step4() {
       <FormWrap>
         <Section>
           <Subtitle>기본주소</Subtitle>
-          <AddressDisplay aria-live="polite">
-            {baseAddress ? (
-              baseAddress
-            ) : (
-              <Hidden aria-hidden>히든 스페이스</Hidden>
-            )}
-          </AddressDisplay>
-          <ActionButton onClick={openAddressSearch}>주소 검색</ActionButton>
+          <SelectInput
+            placeholder="시도 선택"
+            ariaLabel="시도 선택"
+            value={sido}
+            onChange={changeSido}
+            options={sidoOptions}
+          />
+          <SelectInput
+            placeholder="시군구 선택"
+            ariaLabel="시군구 선택"
+            value={sigungu}
+            onChange={changeSigungu}
+            options={sigunguOptions}
+            disabled={!sido}
+          />
+          <TextInput
+            placeholder="도로명 입력"
+            value={roadName}
+            onChange={(v) => setNewAddrField("roadName", v)}
+            ariaLabel="도로명 주소 입력"
+            maxLength={20}
+          />
         </Section>
         <Section>
           <Subtitle>건축물 구분</Subtitle>
           <SelectInput
             value={buildingType}
-            onChange={(e) => setField("buildingType", e.target.value)}
-            options={BUILDING_TYPES}
+            onChange={(e) => setNewAddrField("buildingType", e.target.value)}
+            options={Object.values(buildingTypeMap)}
             ariaLabel="건축물 구분 선택"
             placeholder="선택"
           />
@@ -85,14 +97,14 @@ export default function Step4() {
           </TwoColLabel>
           <TwoCol>
             <NumberInput
-              value={mainNumber}
-              onChange={(v) => setField("mainNumber", v)}
+              value={mainBuildingNumber}
+              onChange={(v) => setNewAddrField("mainBuildingNumber", v)}
               ariaLabel="본번"
               maxLength={5}
             />
             <NumberInput
-              value={subNumber}
-              onChange={(v) => setField("subNumber", v)}
+              value={subBuildingNumber}
+              onChange={(v) => setNewAddrField("subBuildingNumber", v)}
               ariaLabel="부번"
               maxLength={5}
             />
@@ -101,8 +113,8 @@ export default function Step4() {
         <Section>
           <Subtitle>그 외 주소</Subtitle>
           <TextInput
-            value={extraAddress}
-            onChange={(v) => setField("extraAddress", v)}
+            value={detail}
+            onChange={(v) => setNewAddrField("detail", v)}
             ariaLabel="그 외 주소 입력"
             maxLength={20}
           />
@@ -118,9 +130,9 @@ export default function Step4() {
         <Section>
           <LabelText>세대 구성 방법</LabelText>
           <RadioList
-            options={HOUSEHOLD_FORMATION_TYPE}
-            value={householdMethod || ""}
-            onChange={(v) => setField("householdMethod", v)}
+            options={Object.values(householdFormationTypeMap)}
+            value={sedaeju || ""}
+            onChange={(v) => setNewAddrField("sedaeju", v)}
             name="household-method"
             legend="세대 구성 방법"
             gap={30}
@@ -149,28 +161,6 @@ const Subtitle = styled.h2`
   margin: 0;
   padding-left: 12px;
   line-height: 1;
-`;
-
-const AddressDisplay = styled.div`
-  width: 100%;
-  padding: 30px 24px;
-  outline: none;
-  border: 3px solid transparent;
-  border-radius: 24px;
-  font-size: clamp(40px, 1.4vw, 44px);
-  font-weight: 500;
-  box-sizing: border-box;
-
-  background-color: ${({ theme }) => theme.colors.label};
-  color: ${({ theme }) => theme.colors.black};
-  line-height: 1;
-
-  word-break: keep-all;
-  overflow-wrap: anywhere;
-`;
-
-const Hidden = styled.span`
-  visibility: hidden;
 `;
 
 const TwoColLabel = styled.div`

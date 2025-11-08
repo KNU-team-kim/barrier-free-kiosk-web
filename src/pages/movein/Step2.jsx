@@ -1,9 +1,12 @@
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { MOVEIN_STEPS, reasonMap } from "../../features/movein/config";
+import {
+  MOVEIN_STEPS,
+  reasonMap,
+  reverseReasonMap,
+} from "../../features/movein/config";
 import ProcessLayout from "../../layouts/ProcessLayout";
 import { useMoveInStore } from "../../store/moveInStore";
-import { REASON_OPTIONS } from "../../features/movein/config";
 import RadioList from "../../components/inputs/RadioList";
 
 export default function Step2() {
@@ -28,10 +31,10 @@ export default function Step2() {
       <FormWrap>
         <Section aria-labelledby="reason-legend">
           <RadioList
-            options={REASON_OPTIONS}
+            options={Object.values(reasonMap)}
             value={data.reasonCategoryLabel || ""}
             onChange={(label) => {
-              const code = reasonMap[label] || "";
+              const code = reverseReasonMap[label] || "";
               setField("reasonCategory", code); // 서버용 enum 저장
               setField("reasonCategoryLabel", label); // 화면 표시용 (선택사항)
             }}
