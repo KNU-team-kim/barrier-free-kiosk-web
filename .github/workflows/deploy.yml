@@ -29,14 +29,16 @@ jobs:
 
       - name: Create Caddyfile from template
         run: |
-          sed 's/{$DOMAIN}/${{ secrets.SSLIP_DOMAIN }}/g' Caddyfile.template > Caddyfile
+          sed 's/{\$DOMAIN}/${{ secrets.SSLIP_DOMAIN }}/g' Caddyfile.template > Caddyfile
 
       - name: Docker build and push
         run: |
           docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
           docker build -t barrier-free-kiosk-web . 
           docker tag barrier-free-kiosk-web ${{ secrets.DOCKER_HUB_USERNAME }}/barrier-free-kiosk-web:${{ github.sha }}
+          docker tag barrier-free-kiosk-web ${{ secrets.DOCKER_HUB_USERNAME }}/barrier-free-kiosk-web:latest
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/barrier-free-kiosk-web:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/barrier-free-kiosk-web:latest
 
       - name: Copy files to server
         uses: appleboy/scp-action@master
@@ -56,6 +58,7 @@ jobs:
           script: |
             cd /home/ubuntu/app
             echo "DOMAIN=${{ secrets.SSLIP_DOMAIN }}" > .env
+            echo "DOCKER_USERNAME=${{ secrets.DOCKER_HUB_USERNAME }}" >> .env
 
       - name: SSH Connection and Deploy to Server
         uses: appleboy/ssh-action@master
@@ -66,9 +69,20 @@ jobs:
           script: |
             cd /home/ubuntu/app
 
+            # 기존 컨테이너 중지
             sudo docker-compose down
+
+            # Docker 로그인
             sudo docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
-            sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/barrier-free-kiosk-web:${{ github.sha }}
-            sudo docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/barrier-free-kiosk-web:${{ github.sha }} teamkim/barrier-free-kiosk-web:latest
+
+            # 최신 이미지 Pull
+            sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/barrier-free-kiosk-web:latest
+
+            # 불필요한 이미지 정리
             sudo docker system prune -af
+
+            # Docker Compose로 실행
             sudo docker-compose up -d
+
+            # 로그 확인
+            sudo docker-compose logs --tail=50
