@@ -69,8 +69,9 @@ jobs:
           script: |
             cd /home/ubuntu/app
 
-            # 기존 컨테이너 중지
-            sudo docker-compose down
+            # 프론트엔드 컨테이너만 중지 및 삭제
+            sudo docker stop barrier-free-kiosk-web caddy-proxy || true
+            sudo docker rm barrier-free-kiosk-web caddy-proxy || true
 
             # Docker 로그인
             sudo docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
@@ -78,10 +79,10 @@ jobs:
             # 최신 이미지 Pull
             sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/barrier-free-kiosk-web:latest
 
-            # 불필요한 이미지 정리
-            sudo docker system prune -af
+            # 프론트엔드 이미지만 정리 (태그 없는 이전 버전들)
+            sudo docker images ${{ secrets.DOCKER_HUB_USERNAME }}/barrier-free-kiosk-web --filter "dangling=true" -q | xargs -r sudo docker rmi || true
 
-            # Docker Compose로 실행
+            # Docker Compose로 프론트엔드만 실행
             sudo docker-compose up -d
 
             # 로그 확인
