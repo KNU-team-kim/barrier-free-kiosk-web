@@ -4,6 +4,38 @@ services:
   web:
     image: teamkim/barrier-free-kiosk-web:latest
     container_name: barrier-free-kiosk-web
-    ports:
-      - "8002:8002"
+    expose:
+      - "8002" # 외부 노출 제거, 내부 네트워크만
     restart: unless-stopped
+    environment:
+      - TZ=Asia/Seoul
+    networks:
+      - app-network
+
+  caddy:
+    image: caddy:2.7-alpine
+    container_name: caddy-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80" # HTTP (자동 HTTPS 리디렉션용)
+      - "443:443" # HTTPS
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    environment:
+      - DOMAIN=${DOMAIN}
+    networks:
+      - app-network
+    depends_on:
+      - web
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  caddy_data:
+    driver: local
+  caddy_config:
+    driver: local
