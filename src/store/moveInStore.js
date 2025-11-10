@@ -15,12 +15,12 @@ const initial = {
     sido: "",
     sigungu: "",
     roadName: "",
-    mainBuildingNumber: null,
-    subBuildingNumber: null,
+    mainBuildingNumber: "",
+    subBuildingNumber: "",
     detail: "",
     loading: false,
     error: null,
-    result: null, // {sido,sigungu,roadName,buildingNumber,detail} | {notFound:true} | null
+    result: "", // {sido,sigungu,roadName,buildingNumber,detail} | {notFound:true} | null
   },
   // Step4 (새 주소 입력)
   newAddr: {
@@ -28,8 +28,8 @@ const initial = {
     sigungu: "", // 시/군/구
     roadName: "", // 도로명
     buildingType: "", // 지상/지하
-    mainBuildingNumber: null, // 본번
-    subBuildingNumber: null, // 부번
+    mainBuildingNumber: "", // 본번
+    subBuildingNumber: "", // 부번
     detail: "", // 상세주소
     sedaeju: "", // 세대주 구성방법
   },
