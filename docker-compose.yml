@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  web:
+    image: teamkim/barrier-free-kiosk-web:latest
+    container_name: barrier-free-kiosk-web
+    ports:
+      - "8002:8002"
+    restart: unless-stopped

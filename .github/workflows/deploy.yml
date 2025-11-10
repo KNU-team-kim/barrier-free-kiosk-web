@@ -1,0 +1,50 @@
+name: deploy
+on:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+      VITE_PROXY_TARGET: ${{ secrets.VITE_PROXY_TARGET }}
+      VITE_MCP_WS_URL: ${{ secrets.VITE_MCP_WS_URL }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Create .env file
+        run: |
+          echo "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}" >> .env.production
+          echo "VITE_PROXY_TARGET=${{ secrets.VITE_PROXY_TARGET }}" >> .env.production
+          echo "VITE_MCP_WS_URL=${{ secrets.VITE_MCP_WS_URL }}" >> .env.production
+
+      - name: Docker build and push
+        run: |
+          docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
+          docker build -t barrier-free-kiosk-web . 
+          docker tag barrier-free-kiosk-web ${{ secrets.DOCKER_HUB_USERNAME }}/barrier-free-kiosk-web:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/barrier-free-kiosk-web:${{ github.sha }}
+
+      - name: SSH Connection and Deploy to Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          script: |
+            sudo docker rm -f barrier-free-kiosk-web
+            sudo docker system prune -af
+            sudo docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
+            sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/barrier-free-kiosk-web:${{ github.sha }}
+            sudo docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/barrier-free-kiosk-web:${{ github.sha }} barrier-free-kiosk-web
+            sudo docker run -d --name barrier-free-kiosk-web -e TZ=Asia/Seoul -p 8002:8002 barrier-free-kiosk-web
