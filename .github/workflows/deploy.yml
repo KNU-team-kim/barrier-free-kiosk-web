@@ -9,7 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
-      VITE_PROXY_TARGET: ${{ secrets.VITE_PROXY_TARGET }}
       VITE_MCP_WS_URL: ${{ secrets.VITE_MCP_WS_URL }}
 
     steps:
@@ -25,7 +24,6 @@ jobs:
       - name: Create .env file
         run: |
           echo "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}" >> .env.production
-          echo "VITE_PROXY_TARGET=${{ secrets.VITE_PROXY_TARGET }}" >> .env.production
           echo "VITE_MCP_WS_URL=${{ secrets.VITE_MCP_WS_URL }}" >> .env.production
 
       - name: Docker build and push
