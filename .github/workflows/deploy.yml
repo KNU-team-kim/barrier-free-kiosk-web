@@ -46,7 +46,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-          source: "Caddyfile,docker-compose.yml"
+          source: "docker-compose.yml"
           target: "/home/ubuntu/app"
 
       - name: Create .env on server
@@ -70,8 +70,8 @@ jobs:
             cd /home/ubuntu/app
 
             # 프론트엔드 컨테이너만 중지 및 삭제
-            sudo docker stop barrier-free-kiosk-web caddy-proxy || true
-            sudo docker rm barrier-free-kiosk-web caddy-proxy || true
+            sudo docker stop barrier-free-kiosk-web|| true
+            sudo docker rm barrier-free-kiosk-webs|| true
 
             # Docker 로그인
             sudo docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}

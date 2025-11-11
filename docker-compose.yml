@@ -4,35 +4,16 @@ services:
   web:
     image: ${DOCKER_USERNAME}/barrier-free-kiosk-web:latest
     container_name: barrier-free-kiosk-web
-    expose:
-      - "8002"
-    restart: unless-stopped
-    environment:
-      - TZ=Asia/Seoul
-    networks:
-      - app-network
-
-  caddy:
-    image: caddy:2.7-alpine
-    container_name: caddy-proxy
     restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
     environment:
       - DOMAIN=${DOMAIN}
-    networks:
-      - app-network
-    depends_on:
-      - web
-
-networks:
-  app-network:
-    driver: bridge
+      - TZ=Asia/Seoul
 
 volumes:
   caddy_data:

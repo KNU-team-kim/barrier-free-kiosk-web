@@ -1,6 +1,11 @@
 {$DOMAIN} {
-    reverse_proxy web:8002
+    root * /usr/share/caddy
     
+    try_files {path} /index.html
+    
+    file_server
+    
+    # 보안 헤더
     header {
         Strict-Transport-Security "max-age=31536000;"
         X-Content-Type-Options "nosniff"
@@ -8,6 +13,7 @@
         -Server
     }
     
+    # 로그
     log {
         output stdout
         format console
