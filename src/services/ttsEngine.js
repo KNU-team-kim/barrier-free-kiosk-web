@@ -75,6 +75,11 @@ const tts = (() => {
   return {
     /** 큐에 추가 후 필요 시 재생 시작 */
     enqueue(text) {
+      const { enabled } = useVoiceModeStore.getState();
+      if (!enabled) {
+        console.log("[TTS: enqueue] enqueue ignored, voice mode disabled");
+        return;
+      }
       console.log("[TTS] enqueue:", text);
       if (!text) return;
       state.queue.push(String(text));

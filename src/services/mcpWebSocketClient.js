@@ -57,9 +57,12 @@ class MCPWebSocketClient {
     // 송신 큐 (연결 전/중단 시 보관)
     this.outbox = [];
 
-    // 가시성 변화에 따라 재연결(옵션)
+    // 가시성 재연결 옵션
+    this.autoVisibilityReconnect = !!options.autoVisibilityReconnect;
     this._handleVisibility = this._handleVisibility.bind(this);
-    document.addEventListener("visibilitychange", this._handleVisibility);
+    if (this.autoVisibilityReconnect) {
+      document.addEventListener("visibilitychange", this._handleVisibility);
+    }
   }
 
   on(event, fn) {
@@ -229,14 +232,16 @@ class MCPWebSocketClient {
     }, delay);
   }
 
-  /**
-   * 탭이 다시 활성화될 때 재연결 시도(선택 동작)
-   */
+  // 탭이 다시 활성화될 때 재연결 시도(선택 동작)
   _handleVisibility() {
     if (document.visibilityState === "visible") {
       // 끊겨있으면 붙여본다
       if (!this.ws || this.ws.readyState === WebSocket.CLOSED) {
-        if (!this._manuallyClosed && this.enableReconnect) {
+        if (
+          !this._manuallyClosed &&
+          this.enableReconnect &&
+          this.autoVisibilityReconnect
+        ) {
           this.connect();
         }
       }
@@ -248,6 +253,7 @@ class MCPWebSocketClient {
 const mcpWS = new MCPWebSocketClient(WS_URL, {
   reconnect: true,
   maxBackoff: 15000,
+  autoVisibilityReconnect: false,
 });
 
 export default mcpWS;

@@ -3,6 +3,7 @@ import mcpWS from "./mcpWebSocketClient";
 import { routeByStepName } from "./stepRouter";
 import { injectByStepName } from "./formInjector";
 import { useVoiceModeStore } from "../store/voiceModeStore";
+import { use } from "react";
 
 /**
  * VoiceController (최소 오케스트레이션)
@@ -20,13 +21,24 @@ const voiceController = (() => {
   let unsubs = [];
 
   function _onConnected() {
-    const { setWSConnected, setWSReconnecting } = useVoiceModeStore.getState();
+    const { enabled, setWSConnected, setWSReconnecting } =
+      useVoiceModeStore.getState();
+    if (!enabled) {
+      console.log(
+        "[VoiceController: _onConnected] connected but disabled. Disconnecting..."
+      );
+    }
     setWSConnected(true);
     setWSReconnecting(false);
   }
 
   function _onReconnecting({ delay }) {
-    const { setWSReconnecting } = useVoiceModeStore.getState();
+    const { enabled, setWSReconnecting } = useVoiceModeStore.getState();
+    if (!enabled) {
+      console.log(
+        "[VoiceController: _onReconnecting] reconnecting but disabled."
+      );
+    }
     setWSReconnecting(true);
     // 필요 시 delay 활용 로깅 가능
   }
@@ -42,8 +54,14 @@ const voiceController = (() => {
   }
 
   function _onMessage({ message, step_name, data }) {
+    const { enabled, pushCaption } = useVoiceModeStore.getState();
+    if (!enabled) {
+      console.log(
+        "[VoiceController] received message while disabled. Ignored."
+      );
+      return;
+    }
     console.log("[VoiceController] _onMessage:", { message, step_name, data });
-    const { pushCaption } = useVoiceModeStore.getState();
 
     // 1) 라우팅
     if (step_name && navigate) {
@@ -86,7 +104,23 @@ const voiceController = (() => {
       unsubs.push(mcpWS.on("message", _onMessage));
 
       // 연결 시작
+      // mcpWS.connect();
+    },
+
+    // 음성모드 시작
+    start() {
+      const s = useVoiceModeStore.getState();
+      if (!s.enabled) s.setEnabled(true);
       mcpWS.connect();
+    },
+
+    // 음성모드 정지
+    stop() {
+      const s = useVoiceModeStore.getState();
+      s.setEnabled(false);
+      try {
+        mcpWS.disconnect();
+      } catch (_) {}
     },
 
     /**
@@ -123,6 +157,9 @@ const voiceController = (() => {
      * - 캡션에 사용자 발화 기록 후 WS로 전송
      */
     sendUserMessage(text) {
+      const { enabled } = useVoiceModeStore.getState();
+      if (!enabled) return;
+
       const t = String(text || "").trim();
       if (!t) return;
       console.log("[VoiceController] sendUserMessage →", t); // ★ 여기
