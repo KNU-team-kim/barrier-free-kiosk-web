@@ -1,5 +1,4 @@
 version: "3.8"
-
 services:
   web:
     image: ${DOCKER_USERNAME}/barrier-free-kiosk-web:latest
@@ -14,7 +13,8 @@ services:
     environment:
       - DOMAIN=${DOMAIN}
       - TZ=Asia/Seoul
-
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 volumes:
   caddy_data:
     driver: local

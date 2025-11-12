@@ -1,9 +1,36 @@
 {$DOMAIN} {
-    root * /usr/share/caddy
+    # WebSocket 프록시 (8000번 포트)
+    @websocket {
+        path /conversation*
+    }
+    handle @websocket {
+        reverse_proxy host.docker.internal:8000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+            # WebSocket 업그레이드 헤더
+            header_up Connection {>Connection}
+            header_up Upgrade {>Upgrade}
+        }
+    }
     
-    try_files {path} /index.html
+    # API 프록시 (8080번 포트)
+    handle /api/* {
+        reverse_proxy host.docker.internal:8080 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
     
-    file_server
+    # 정적 파일 서빙 (React 앱)
+    handle {
+        root * /usr/share/caddy
+        try_files {path} /index.html
+        file_server
+    }
     
     # 보안 헤더
     header {

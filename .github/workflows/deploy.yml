@@ -70,8 +70,8 @@ jobs:
             cd /home/ubuntu/app
 
             # 프론트엔드 컨테이너만 중지 및 삭제
-            sudo docker stop barrier-free-kiosk-web|| true
-            sudo docker rm barrier-free-kiosk-webs|| true
+            sudo docker stop barrier-free-kiosk-web || true
+            sudo docker rm barrier-free-kiosk-web || true
 
             # Docker 로그인
             sudo docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
