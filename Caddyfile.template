@@ -1,17 +1,11 @@
 {$DOMAIN} {
     # WebSocket 프록시 (8000번 포트)
-    @websocket {
-        path /conversation*
-    }
-    handle @websocket {
+    handle /conversation {
         reverse_proxy host.docker.internal:8000 {
             header_up Host {host}
             header_up X-Real-IP {remote_host}
             header_up X-Forwarded-For {remote_host}
             header_up X-Forwarded-Proto {scheme}
-            # WebSocket 업그레이드 헤더
-            header_up Connection {>Connection}
-            header_up Upgrade {>Upgrade}
         }
     }
     
