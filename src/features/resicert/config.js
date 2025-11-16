@@ -5,7 +5,10 @@ export const MOVEIN_STEPS = [
   "내용 및 수수료 확인",
 ];
 
-export const CERT_TYPE = ["전체 발급", "선택 발급"];
+export const certTypeMap = { SIMPLE: "전체 발급", DETAILED: "선택 발급" };
+export const reverseCertTypeMap = Object.fromEntries(
+  Object.entries(certTypeMap).map(([k, v]) => [v, k])
+);
 
 export const CERT_TYPE_DETAILED_OPTION = [
   "과거의 주소 변동사항",

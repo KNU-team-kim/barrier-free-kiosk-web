@@ -1,9 +1,10 @@
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import {
-  CERT_TYPE,
+  certTypeMap,
   CERT_TYPE_DETAILED_OPTION,
   MOVEIN_STEPS,
+  reverseCertTypeMap,
 } from "../../features/resicert/config";
 import ProcessLayout from "../../layouts/ProcessLayout";
 import { useRegiCertStore } from "../../store/regiCertStore";
@@ -30,10 +31,12 @@ export default function RegiStep2() {
         <Label>발급형태</Label>
         <Section aria-labelledby="reason-legend">
           <RadioList
-            options={CERT_TYPE}
-            value={data.certType || ""}
+            options={Object.values(certTypeMap)}
+            value={data.certTypeLabel || ""}
             onChange={(v) => {
-              setField("certType", v);
+              const code = reverseCertTypeMap[v] || "";
+              setField("certType", code); // 서버용 enum 저장
+              setField("certTypeLabel", v); // 화면 표시용
               if (v !== "선택 발급") {
                 setField("certDetails", []);
               }
@@ -44,7 +47,7 @@ export default function RegiStep2() {
             aria-labelledby="reason-legend"
           />
         </Section>
-        {data.certType === "선택 발급" && (
+        {data.certTypeLabel === "선택 발급" && (
           <>
             <OptionSection>
               <CheckboxList
