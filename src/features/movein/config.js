@@ -6,38 +6,46 @@ export const MOVEIN_STEPS = [
   "기타 서비스 신청",
 ];
 
-export const REASON_OPTIONS = [
-  "직업: 취업, 사업, 직장이전 등",
-  "가족: 가족과 함께 거주, 결혼, 분가 등",
-  "주택: 주택 구입, 계약 만료, 집세, 재개발 등",
-  "교육: 진학, 학업, 자녀교육 등",
-  "주거환경: 교통, 문화, 편의시설 등",
-  "자연환경: 건강, 공해, 전원생활 등",
-];
-
 export const reasonMap = {
-  "직업: 취업, 사업, 직장이전 등": "JOB",
-  "가족: 가족과 함께 거주, 결혼, 분가 등": "FAMILY",
-  "주택: 주택 구입, 계약 만료, 집세, 재개발 등": "HOUSE",
-  "교육: 진학, 학업, 자녀교육 등": "EDUCATION",
-  "주거환경: 교통, 문화, 편의시설 등": "ENVIRONMENT",
-  "자연환경: 건강, 공해, 전원생활 등": "NATURE",
+  JOB: "직업: 취업, 사업, 직장이전 등",
+  FAMILY: "가족: 가족과 함께 거주, 결혼, 분가 등",
+  HOUSE: "주택: 주택 구입, 계약 만료, 집세, 재개발 등",
+  EDUCATION: "교육: 진학, 학업, 자녀교육 등",
+  ENVIRONMENT: "주거환경: 교통, 문화, 편의시설 등",
+  NATURE: "자연환경: 건강, 공해, 전원생활 등",
 };
 
-export const SERVICE_OPTIONS = [
-  "이/통장 등의 사후확인 생략 및 주택 임대차계약 신고(확정일자 의제)를 위한 서류제출",
-  "우편물 주소 이전 서비스 신청",
-  "초등학교 배정 정보 신청",
-  "전기 사용자 명의변경 신청",
-  "사회적 배려 대상자를 위한 요금감면 일괄신청",
-];
+export const reverseReasonMap = Object.fromEntries(
+  Object.entries(reasonMap).map(([k, v]) => [v, k])
+);
 
-export const BUILDING_TYPES = ["지상", "지하"];
+export const serviceOptionsMap = {
+  DOCUMENT:
+    "이/통장 등의 사후확인 생략 및 주택 임대차계약 신고(확정일자 의제)를 위한 서류제출",
+  ADDRESS_CHANGE: "우편물 주소 이전 서비스 신청",
+  ELEMENTARY: "초등학교 배정 정보 신청",
+  ELECTRICITY: "전기 사용자 명의변경 신청",
+  FEE_REDUCTION: "사회적 배려 대상자를 위한 요금감면 일괄신청",
+};
+export const reverseServiceOptionsMap = Object.fromEntries(
+  Object.entries(serviceOptionsMap).map(([k, v]) => [v, k])
+);
 
-export const HOUSEHOLD_FORMATION_TYPE = [
-  "이사온 사람끼리 세대 구성 (빈집으로 이사)",
-  "이사온 곳에 기존에 살고 있는 세대주가 있는 경우",
-];
+export const buildingTypeMap = {
+  GROUND: "지상",
+  UNDERGROUND: "지하",
+};
+export const reverseBuildingTypeMap = Object.fromEntries(
+  Object.entries(buildingTypeMap).map(([k, v]) => [v, k])
+);
+
+export const householdFormationTypeMap = {
+  NEW: "이사온 사람끼리 세대 구성 (빈집으로 이사)",
+  EXIST: "이사온 곳에 기존에 살고 있는 세대주가 있는 경우",
+};
+export const reverseHouseholdFormationTypeMap = Object.fromEntries(
+  Object.entries(householdFormationTypeMap).map(([k, v]) => [v, k])
+);
 
 export const SIGUNGU = {
   서울특별시: [

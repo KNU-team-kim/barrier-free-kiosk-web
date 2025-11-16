@@ -1,0 +1,42 @@
+{$DOMAIN} {
+    # WebSocket 프록시 (8000번 포트)
+    handle /conversation {
+        reverse_proxy host.docker.internal:8000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+    
+    # API 프록시 (8080번 포트)
+    handle /api/* {
+        reverse_proxy host.docker.internal:8080 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+    
+    # 정적 파일 서빙 (React 앱)
+    handle {
+        root * /usr/share/caddy
+        try_files {path} /index.html
+        file_server
+    }
+    
+    # 보안 헤더
+    header {
+        Strict-Transport-Security "max-age=31536000;"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        -Server
+    }
+    
+    # 로그
+    log {
+        output stdout
+        format console
+    }
+}

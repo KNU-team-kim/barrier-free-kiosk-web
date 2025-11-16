@@ -1,9 +1,8 @@
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { MOVEIN_STEPS } from "../../features/movein/config";
+import { MOVEIN_STEPS, serviceOptionsMap } from "../../features/movein/config";
 import ProcessLayout from "../../layouts/ProcessLayout";
 import { useMoveInStore } from "../../store/moveInStore";
-import { SERVICE_OPTIONS } from "../../features/movein/config";
 import CheckboxList from "../../components/inputs/CheckboxList";
 import { postMoveIn } from "../../api/moveIn";
 
@@ -35,7 +34,7 @@ export default function Step5() {
     >
       <FormWrap>
         <CheckboxList
-          options={SERVICE_OPTIONS}
+          options={Object.values(serviceOptionsMap)}
           values={data.services || []}
           onChange={(next) => setField("services", next)}
           name="movein-services"
