@@ -2,7 +2,7 @@ name: deploy
 on:
   push:
     branches:
-      - feat/10-stt-websocket
+      - dev
   workflow_dispatch:
 
 jobs:
