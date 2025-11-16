@@ -4,15 +4,23 @@ import { MOVEIN_STEPS } from "../../features/resicert/config";
 import ProcessLayout from "../../layouts/ProcessLayout";
 import LabelText from "../../components/common/LabelText";
 import { useRegiCertStore } from "../../store/regiCertStore";
+import { postRegistration } from "../../api/resident";
 
 export default function RegiStep4() {
   const navigate = useNavigate();
-  const { data, setField } = useRegiCertStore();
+  const { data, buildRegiCertPayload, reset } = useRegiCertStore();
 
   const onPrev = () => {
     navigate("../step-3");
   };
-  const onComplete = () => {
+  const onComplete = async () => {
+    const payload = buildRegiCertPayload();
+    console.log("[RegiCert] request payload:", payload);
+
+    const res = await postRegistration(payload);
+    console.log("[RegiCert] response:", res);
+
+    reset();
     navigate("../complete");
   };
 
