@@ -19,7 +19,7 @@ export default function HomeContent({ onToggleHC, onToggleLarge }) {
   // Voice Mode
   const navigate = useNavigate();
   const startedRef = useRef(false); // 중복 init 방지
-  const { ws } = useVoiceModeStore(); // 연결상태를 버튼 표시와 동기화(선택)
+  const { ws, setEnabled } = useVoiceModeStore(); // 연결상태를 버튼 표시와 동기화(선택)
 
   const handleStartVoice = () => {
     if (startedRef.current) return; // 여러 번 눌러도 1회만 초기화
@@ -41,8 +41,10 @@ export default function HomeContent({ onToggleHC, onToggleLarge }) {
       },
     });
 
-    console.log("[HomeContent] STT start()");
-    stt.start();
+    // stt.start();
+    setEnabled(true);
+    console.log("[HomeContent] voiceController.start()");
+    voiceController.start();
   };
 
   return (
