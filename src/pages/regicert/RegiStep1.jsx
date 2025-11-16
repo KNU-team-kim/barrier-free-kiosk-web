@@ -6,13 +6,25 @@ import { useRegiCertStore } from "../../store/regiCertStore";
 import NumberInput from "../../components/inputs/NumberInput";
 import NumericPad from "../../components/inputs/NumericPad";
 import { useRef } from "react";
+import { checkRegistration } from "../../api/resident";
 
 export default function RegiStep1() {
   const navigate = useNavigate();
-  const { data, setField } = useRegiCertStore();
+  const { data, setField, getFullID } = useRegiCertStore();
 
-  const onNext = () => {
-    navigate("../step-2");
+  const onNext = async () => {
+    const data = await checkValidID();
+    if (data) {
+      navigate("../step-2");
+    } else {
+      alert("유효하지 않은 주민등록번호입니다. 다시 확인해 주세요.");
+    }
+  };
+
+  const checkValidID = async () => {
+    const fullID = getFullID();
+    const data = await checkRegistration({ registrationNumber: fullID });
+    return data;
   };
 
   const frontRef = useRef(null);
@@ -37,7 +49,7 @@ export default function RegiStep1() {
     setField("idFront", nextFront);
     setField("idBack", nextBack);
 
-    focusByTotalLen(next.length); // ✅ 포커스 이동
+    focusByTotalLen(next.length); // 포커스 이동
   };
 
   const handleDelete = () => {
@@ -51,7 +63,7 @@ export default function RegiStep1() {
     setField("idFront", nextFront);
     setField("idBack", nextBack);
 
-    focusByTotalLen(next.length); // ✅ 포커스 이동
+    focusByTotalLen(next.length); // 포커스 이동
   };
 
   return (

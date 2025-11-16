@@ -5,13 +5,27 @@ import TextInput from "../../components/inputs/TextInput";
 import NumberInput from "../../components/inputs/NumberInput";
 import ProcessLayout from "../../layouts/ProcessLayout";
 import { MOVEIN_STEPS } from "../../features/movein/config";
+import { checkMoveIn } from "../../api/moveIn";
 
 export default function Step1() {
   const navigate = useNavigate();
-  const { data, setField } = useMoveInStore();
+  const { data, setField, getFullPhone } = useMoveInStore();
 
-  const onNext = () => {
-    navigate("../step-2");
+  const onNext = async () => {
+    const data = await checkValidUser();
+    if (data) {
+      navigate("../step-2");
+    } else {
+      alert("유효하지 않은 사용자 정보입니다. 다시 확인해 주세요.");
+    }
+  };
+
+  const checkValidUser = async () => {
+    const res = await checkMoveIn({
+      phoneNumber: getFullPhone(),
+      name: data.applicantName,
+    });
+    return res;
   };
 
   return (
