@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import ProcessLayout from "../../layouts/ProcessLayout";
-import { MOVEIN_STEPS } from "../../features/resicert/config";
+import { MOVEIN_STEPS } from "../../features/regicert/config";
 import styled from "styled-components";
 import { useRegiCertStore } from "../../store/regiCertStore";
 import NumberInput from "../../components/inputs/NumberInput";

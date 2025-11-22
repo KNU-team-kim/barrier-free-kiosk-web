@@ -5,7 +5,7 @@ import {
   CERT_TYPE_DETAILED_OPTION,
   MOVEIN_STEPS,
   reverseCertTypeMap,
-} from "../../features/resicert/config";
+} from "../../features/regicert/config";
 import ProcessLayout from "../../layouts/ProcessLayout";
 import { useRegiCertStore } from "../../store/regiCertStore";
 import RadioList from "../../components/inputs/RadioList";

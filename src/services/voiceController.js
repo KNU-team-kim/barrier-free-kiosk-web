@@ -4,7 +4,7 @@ import {
   injectMoveInByStepName,
   injectRegiCertByStepName,
 } from "./formInjector";
-import { useVoiceModeStore, setFocusTarget } from "../store/voiceModeStore";
+import { useVoiceModeStore } from "../store/voiceModeStore";
 
 const FOCUS_TARGET_MAP = {
   registration_number: "regi.registration_number",
@@ -24,6 +24,8 @@ const voiceController = (() => {
   let navigate = null;
   let enqueueTTS = null;
   let unsubs = [];
+
+  const { setFocusTarget } = useVoiceModeStore.getState();
 
   function _onConnected() {
     const { enabled, setWSConnected, setWSReconnecting } =
