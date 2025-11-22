@@ -31,6 +31,8 @@ export const useVoiceModeStore = create((set, get) => ({
 
   captions: [],
 
+  focusTarget: null,
+
   // --- Actions: Voice Mode ---
   setEnabled: (v) => set({ enabled: !!v }),
   toggleEnabled: () => set((s) => ({ enabled: !s.enabled })),
@@ -70,6 +72,10 @@ export const useVoiceModeStore = create((set, get) => ({
     })),
   clearCaptions: () => set({ captions: [] }),
 
+  // --- Actions: Focus ---
+  setFocusTarget: (target) => set({ focusTarget: target || null }),
+  clearFocusTarget: () => set({ focusTarget: null }),
+
   // --- Utils ---
   resetVoiceState: () =>
     set({
@@ -78,5 +84,6 @@ export const useVoiceModeStore = create((set, get) => ({
       stt: { listening: false, interim: "", final: "" },
       tts: { speaking: false, queueLength: 0 },
       captions: [],
+      focusTarget: null,
     }),
 }));

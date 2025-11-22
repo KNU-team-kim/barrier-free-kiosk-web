@@ -1,15 +1,39 @@
-// src/services/formInjector.js
 import {
   buildingTypeMap,
   householdFormationTypeMap,
   reasonMap,
   serviceOptionsMap,
 } from "../features/movein/config";
+import { certTypeMap } from "../features/regicert/config";
 import { useMoveInStore } from "../store/moveInStore";
+import { useRegiCertStore } from "../store/regiCertStore";
 
-/**
- * step_name → store 필드 매핑 표
- */
+function normalizeStepName(stepName) {
+  return String(stepName || "")
+    .trim()
+    .toLowerCase();
+}
+
+function digitsOnly(s) {
+  return String(s || "").replace(/\D/g, "");
+}
+
+// 전화번호 3-4-4 분해
+function splitPhoneParts(raw) {
+  const d = digitsOnly(raw);
+  if (!d) return { p1: "", p2: "", p3: "" };
+
+  if (d.length <= 3) return { p1: d, p2: "", p3: "" };
+
+  // 기본 3-4-4 분해 (10자리면 3-3-4가 될 수 있으나 UI는 3칸이므로 3-4-3도 허용됨)
+  const p1 = d.slice(0, 3);
+  const midLen = d.length === 10 ? 3 : 4;
+  const p2 = d.slice(3, 3 + midLen);
+  const p3 = d.slice(3 + midLen);
+  return { p1, p2, p3 };
+}
+
+// step_name - store 필드 매핑 표
 const MOVE_IN_STORE_STEP_MAP = {
   name: "applicantName",
   phone_number: "phone", // 특수 처리
@@ -29,35 +53,10 @@ const MOVE_IN_STORE_STEP_MAP = {
   other_service: "services", // 특수 처리
 };
 
-/** 숫자만 남기기 */
-function digitsOnly(s) {
-  return String(s || "").replace(/\D/g, "");
-}
-
-/** 휴대전화(보통 10~11자리) → 3-4-4 분해 */
-function splitPhoneParts(raw) {
-  const d = digitsOnly(raw);
-  if (!d) return { p1: "", p2: "", p3: "" };
-
-  if (d.length <= 3) return { p1: d, p2: "", p3: "" };
-
-  // 기본 3-4-4 분해 (10자리면 3-3-4가 될 수 있으나 UI는 3칸이므로 3-4-3도 허용됨)
-  const p1 = d.slice(0, 3);
-  const midLen = d.length === 10 ? 3 : 4;
-  const p2 = d.slice(3, 3 + midLen);
-  const p3 = d.slice(3 + midLen);
-  return { p1, p2, p3 };
-}
-
-/**
- * FormInjector: step_name과 data를 받아 useMoveInStore의 올바른 필드에 자동 주입
- */
-export function injectByStepName(stepName, data) {
-  const key = String(stepName || "")
-    .trim()
-    .toLowerCase();
+export function injectMoveInByStepName(stepName, data) {
+  const key = normalizeStepName(stepName);
   const field = MOVE_IN_STORE_STEP_MAP[key];
-  console.log("[FormInjector] injectByStepName:", {
+  console.log("[FormInjector] injectMoveInByStepName:", {
     stepName: key,
     data,
     field,
@@ -180,6 +179,36 @@ export function injectByStepName(stepName, data) {
     setField(field, value);
   }
 
-  console.log("[FormInjector] injected:", { field, value });
+  console.log("[FormInjector] Move-in injected:", { field, value });
   return true;
+}
+
+export function injectRegiCertByStepName(stepName, data) {
+  const key = normalizeStepName(stepName);
+  const { setField } = useRegiCertStore.getState();
+
+  if (key === "registration_number") {
+    const d = digitsOnly(String(data ?? ""));
+    const front = d.slice(0, 6);
+    const back = d.slice(6, 13);
+    setField("idFront", front);
+    setField("idBack", back);
+    console.log("[FormInjector] injected(regi-cert:registration_number)", {
+      front,
+      back,
+    });
+    return true;
+  } else if (key === "type") {
+    setField("certType", data);
+    setField("certTypeLabel", certTypeMap[data]);
+    console.log("[FormInjector] injected(regi-cert:type)", data);
+    return true;
+  } else if (key === "number") {
+    const n = Number(data);
+    setField("copies", n);
+    console.log("[FormInjector] injected(regi-cert:number)", { copies: n });
+    return true;
+  }
+
+  return false;
 }

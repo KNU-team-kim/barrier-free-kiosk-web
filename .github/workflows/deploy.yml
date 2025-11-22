@@ -2,7 +2,7 @@ name: deploy
 on:
   push:
     branches:
-      - dev
+      - feat/17-resident-cert-voice-mode
   workflow_dispatch:
 
 jobs:

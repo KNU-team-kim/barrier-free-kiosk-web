@@ -1,11 +1,8 @@
-/**
- * move-in 시나리오 전용 step_name -> 페이지 경로 매핑
- * 페이지 구조: Step1 ~ Step5 + Complete
- */
 const MAP = {
   // Home
   home: "/",
 
+  /* 전입신고 Steps */
   // Step1
   name: "/move-in/step-1",
   phone_number: "/move-in/step-1",
@@ -31,6 +28,13 @@ const MAP = {
   other_service: "/move-in/step-5",
   // 완료
   complete_move_in: "/move-in/complete",
+
+  /* 주민등록초본 발급 Steps */
+  registration_number: "/regi-cert/step-1",
+  type: "/regi-cert/step-2",
+  number: "/regi-cert/step-3",
+  check: "/regi-cert/step-4",
+  complete_regi_cert: "/regi-cert/complete",
 };
 
 /**

@@ -1,9 +1,14 @@
-// src/services/voiceController.js
 import mcpWS from "./mcpWebSocketClient";
-import { routeByStepName } from "./stepRouter";
-import { injectByStepName } from "./formInjector";
-import { useVoiceModeStore } from "../store/voiceModeStore";
-import { use } from "react";
+import { routeByStepName, getPathByStepName } from "./stepRouter";
+import {
+  injectMoveInByStepName,
+  injectRegiCertByStepName,
+} from "./formInjector";
+import { useVoiceModeStore, setFocusTarget } from "../store/voiceModeStore";
+
+const FOCUS_TARGET_MAP = {
+  registration_number: "regi.registration_number",
+};
 
 /**
  * VoiceController (최소 오케스트레이션)
@@ -63,16 +68,44 @@ const voiceController = (() => {
     }
     console.log("[VoiceController] _onMessage:", { message, step_name, data });
 
+    let path = null;
+    if (step_name) {
+      path = getPathByStepName(step_name);
+    }
+
     // 1) 라우팅
-    if (step_name && navigate) {
+    if (step_name && navigate && path) {
       console.log("[VoiceController] routing:", step_name);
       routeByStepName(navigate, step_name);
     }
 
+    // 포커스 타겟 설정
+    const focusTarget =
+      FOCUS_TARGET_MAP[String(step_name).trim().toLowerCase()];
+    if (focusTarget) {
+      console.log("[VoiceController] setFocusTarget:", focusTarget);
+      setFocusTarget(focusTarget);
+    }
+
     // 2) 폼 주입
-    if (step_name && typeof data !== "undefined") {
-      console.log("[VoiceController] injecting:", step_name, "=>", data);
-      injectByStepName(step_name, data);
+    if (step_name && typeof data !== "undefined" && path) {
+      if (path.startsWith("/move-in/")) {
+        console.log(
+          "[VoiceController] injecting(move-in):",
+          step_name,
+          "=>",
+          data
+        );
+        injectMoveInByStepName(step_name, data);
+      } else if (path.startsWith("/regi-cert/")) {
+        console.log(
+          "[VoiceController] injecting(regi-cert):",
+          step_name,
+          "=>",
+          data
+        );
+        injectRegiCertByStepName(step_name, data);
+      }
     }
 
     // 3) 캡션(시스템)
@@ -102,9 +135,6 @@ const voiceController = (() => {
       unsubs.push(mcpWS.on("disconnected", _onDisconnected));
       unsubs.push(mcpWS.on("error", _onError));
       unsubs.push(mcpWS.on("message", _onMessage));
-
-      // 연결 시작
-      // mcpWS.connect();
     },
 
     // 음성모드 시작

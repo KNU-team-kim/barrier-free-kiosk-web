@@ -5,8 +5,9 @@ import styled from "styled-components";
 import { useRegiCertStore } from "../../store/regiCertStore";
 import NumberInput from "../../components/inputs/NumberInput";
 import NumericPad from "../../components/inputs/NumericPad";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { checkRegistration } from "../../api/resident";
+import { useVoiceModeStore } from "../../store/voiceModeStore";
 
 export default function RegiStep1() {
   const navigate = useNavigate();
@@ -29,6 +30,22 @@ export default function RegiStep1() {
 
   const frontRef = useRef(null);
   const backRef = useRef(null);
+
+  const focusTarget = useVoiceModeStore((s) => s.focusTarget);
+  const clearFocusTarget = useVoiceModeStore((s) => s.clearFocusTarget);
+
+  useEffect(() => {
+    // VoiceController에서 registration_number 스텝일 때
+    // focusTarget을 'regi.registration_number'로 세팅해줬으므로,
+    // 그 신호를 보고 앞자리 input에 포커스
+    if (focusTarget === "regi.registration_number") {
+      // 이미 step-1 라우팅이 끝나고 이 컴포넌트가 마운트된 시점이면,
+      // ref가 살아 있으므로 바로 focus 가능
+      frontRef.current?.focus();
+      // 한 번 포커스 주고 나면 플래그는 지워주는 게 깔끔
+      clearFocusTarget();
+    }
+  }, [focusTarget, clearFocusTarget]);
 
   const focusByTotalLen = (totalLen) => {
     if (totalLen <= 5) {
