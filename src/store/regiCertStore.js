@@ -8,7 +8,6 @@ const initial = {
   // Step2
   certType: "", // SIMPLE, DETAILED
   certTypeLabel: "",
-  certDetails: [],
 
   // Step3
   copies: 0,

@@ -7,11 +7,13 @@ export default function SelectInput({
   disabled = false,
   ariaLabel,
   placeholder = "선택하세요",
+  ref,
 }) {
   return (
     <Field>
       <Select
         value={value}
+        ref={ref || null}
         onChange={onChange}
         aria-label={ariaLabel}
         disabled={disabled}
@@ -61,5 +63,11 @@ const Select = styled.select`
     font-weight: 500;
     color: ${({ theme }) => theme.colors.black};
     cursor: not-allowed;
+  }
+
+  &:focus {
+    border-color: ${({ theme }) => theme.colors.highlight};
+    border-width: 3px;
+    outline: none;
   }
 `;

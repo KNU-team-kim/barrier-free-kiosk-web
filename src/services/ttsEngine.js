@@ -25,7 +25,11 @@ const tts = (() => {
     if (state.playing) return;
     const text = state.queue.shift();
     _updateStore();
-    if (!text) return;
+    if (!text) {
+      // 큐가 비었고 재생 중이 아니면 STT 재시작
+      _tryRestartSTT();
+      return;
+    }
 
     try {
       const stt = (await import("./sttEngine")).default;
@@ -46,21 +50,21 @@ const tts = (() => {
     _updateStore();
 
     u.onend = () => {
+      const sttLocked = useVoiceModeStore.getState().sttLocked;
       state.playing = false;
       _updateStore();
 
-      setTimeout(async () => {
-        try {
-          const stt = (await import("./sttEngine")).default;
-          stt.start();
-          console.log("[TTS] finished speaking → STT restarted");
-        } catch (e) {
-          console.warn("[TTS] failed to restart STT:", e);
-        }
-      }, 500); // 0.5초 지연 (필요 시 조정)
+      if (sttLocked) {
+        console.log(
+          "[TTS] finished speaking → STT restart skipped (STT locked)"
+        );
+        _playNext();
+        return;
+      }
 
       // 다음 항목 자동 재생
       _playNext();
+      // _playNext() 내부에서 큐가 비었을 때 STT 재시작을 처리함
     };
     u.onerror = () => {
       state.playing = false;
@@ -70,6 +74,42 @@ const tts = (() => {
 
     console.log("[TTS] speak()");
     synth.speak(u);
+  }
+
+  // STT 재시작 시도 (큐가 비었고 재생 중이 아닐 때만)
+  // STT 재시작 로직을 완전히 분리하여, 큐가 비었을 때만 STT를 재시작함.
+  // Todo: 추후 자세히 정리하기
+  function _tryRestartSTT() {
+    const sttLocked = useVoiceModeStore.getState().sttLocked;
+    if (sttLocked) {
+      console.log("[TTS] STT restart skipped (STT locked)");
+      return;
+    }
+
+    // 큐가 비었고 재생 중이 아닐 때만 STT 재시작
+    if (state.queue.length === 0 && !state.playing) {
+      setTimeout(async () => {
+        // 재시작 전에 다시 한 번 확인 (타이밍 이슈 방지)
+        const currentState = useVoiceModeStore.getState();
+        if (currentState.sttLocked) {
+          console.log("[TTS] STT restart cancelled (STT locked during delay)");
+          return;
+        }
+        if (state.queue.length > 0 || state.playing) {
+          console.log(
+            "[TTS] STT restart cancelled (TTS queue/playing changed during delay)"
+          );
+          return;
+        }
+        try {
+          const stt = (await import("./sttEngine")).default;
+          stt.start();
+          console.log("[TTS] all TTS finished → STT restarted");
+        } catch (e) {
+          console.warn("[TTS] failed to restart STT:", e);
+        }
+      }, 500); // 0.5초 지연 (필요 시 조정)
+    }
   }
 
   return {
