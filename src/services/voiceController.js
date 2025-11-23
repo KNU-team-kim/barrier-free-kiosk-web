@@ -175,11 +175,32 @@ const voiceController = (() => {
     },
 
     // 음성모드 정지
-    stop() {
+    async stop() {
       const s = useVoiceModeStore.getState();
       s.setEnabled(false);
+
+      // STT 중지
+      try {
+        const stt = (await import("./sttEngine")).default;
+        stt.stop();
+        console.log("[VoiceController] STT stopped");
+      } catch (e) {
+        console.warn("[VoiceController] failed to stop STT:", e);
+      }
+
+      // TTS 중지 및 큐 비우기
+      try {
+        const tts = (await import("./ttsEngine")).default;
+        tts.stopAll();
+        console.log("[VoiceController] TTS stopped");
+      } catch (e) {
+        console.warn("[VoiceController] failed to stop TTS:", e);
+      }
+
+      // WebSocket 연결 종료
       try {
         mcpWS.disconnect();
+        console.log("[VoiceController] WebSocket disconnected");
       } catch {
         // Ignore disconnect errors
       }
