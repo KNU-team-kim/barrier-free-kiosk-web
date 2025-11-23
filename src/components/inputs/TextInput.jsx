@@ -7,16 +7,19 @@ export default function TextInput({
   ariaLabel,
   id,
   maxLength,
+  ref,
 }) {
   // 한글, 영문, 공백만 허용
   const handleChange = (e) => {
     onChange?.(e.target.value);
   };
+  console.log("TextInput rendered with ref:", ref);
 
   return (
     <Input
       id={id}
-      value={value}
+      ref={ref || null}
+      value={value ?? ""}
       onChange={handleChange}
       placeholder={placeholder}
       aria-label={ariaLabel}

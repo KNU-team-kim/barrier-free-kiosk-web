@@ -19,30 +19,36 @@ export default function HomeContent({ onToggleHC, onToggleLarge }) {
   // Voice Mode
   const navigate = useNavigate();
   const startedRef = useRef(false); // 중복 init 방지
-  const { ws, setEnabled } = useVoiceModeStore(); // 연결상태를 버튼 표시와 동기화(선택)
+  const { enabled } = useVoiceModeStore(); // 음성 모드 활성화 상태
 
   const handleStartVoice = () => {
-    if (startedRef.current) return; // 여러 번 눌러도 1회만 초기화
-    startedRef.current = true;
+    // 음성 모드가 이미 켜져있으면 종료
+    if (enabled) {
+      console.log("[HomeContent] Stopping Voice Mode...");
+      voiceController.stop();
+      return;
+    }
 
-    console.log("[HomeContent] Initializing Voice Controller...");
-    // WS 연결 + 서버 응답 오면 voiceController가 자동으로 TTS로 읽어줌
-    voiceController.init({
-      navigate,
-      enqueueTTS: tts.enqueue,
-    });
+    // 음성 모드 초기화 (최초 1회만)
+    if (!startedRef.current) {
+      startedRef.current = true;
+      console.log("[HomeContent] Initializing Voice Controller...");
+      // WS 연결 + 서버 응답 오면 voiceController가 자동으로 TTS로 읽어줌
+      voiceController.init({
+        navigate,
+        enqueueTTS: tts.enqueue,
+      });
 
-    // STT 콜백, 최종 텍스트는 WS로 전송
-    stt.setHandlers({
-      onInterim: (txt) => console.log("[HomeContent] STT interim:", txt),
-      onFinal: (txt) => {
-        console.log("[HomeContent] STT final:", txt);
-        voiceController.sendUserMessage(txt); // ← WS 전송 트리거
-      },
-    });
+      // STT 콜백, 최종 텍스트는 WS로 전송
+      stt.setHandlers({
+        onInterim: (txt) => console.log("[HomeContent] STT interim:", txt),
+        onFinal: (txt) => {
+          console.log("[HomeContent] STT final:", txt);
+          voiceController.sendUserMessage(txt); // ← WS 전송 트리거
+        },
+      });
+    }
 
-    // stt.start();
-    setEnabled(true);
     console.log("[HomeContent] voiceController.start()");
     voiceController.start();
   };
@@ -69,16 +75,8 @@ export default function HomeContent({ onToggleHC, onToggleLarge }) {
           고대비
         </ToolButton>
         <ToolButton
-          onClick={onToggleLarge}
-          aria-pressed={false}
-          data-active={false}
-          aria-label="큰글자 모드"
-        >
-          큰글자
-        </ToolButton>
-        <ToolButton
           aria-label="음성 안내"
-          data-active={ws?.connected || false}
+          data-active={enabled || false}
           onClick={handleStartVoice}
         >
           음성
@@ -89,13 +87,13 @@ export default function HomeContent({ onToggleHC, onToggleLarge }) {
 
       <Actions>
         <ActionItem align="right">
-          <Link to="/regi-cert/step-1" aria-label="주민등록등본 발급으로 이동">
+          <Link to="/regi-cert/step-1" aria-label="주민등록초본 발급으로 이동">
             <ActionButton>
               <IconWrap>
                 <IconCircle>🖨️</IconCircle>
               </IconWrap>
               <Label>
-                주민등록등본
+                주민등록초본
                 <br />
                 발급하기
               </Label>

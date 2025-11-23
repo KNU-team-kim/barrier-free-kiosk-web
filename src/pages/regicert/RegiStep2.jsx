@@ -2,14 +2,12 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import {
   certTypeMap,
-  CERT_TYPE_DETAILED_OPTION,
   MOVEIN_STEPS,
   reverseCertTypeMap,
-} from "../../features/resicert/config";
+} from "../../features/regicert/config";
 import ProcessLayout from "../../layouts/ProcessLayout";
 import { useRegiCertStore } from "../../store/regiCertStore";
 import RadioList from "../../components/inputs/RadioList";
-import CheckboxList from "../../components/inputs/CheckboxList";
 
 export default function RegiStep2() {
   const navigate = useNavigate();
@@ -37,9 +35,6 @@ export default function RegiStep2() {
               const code = reverseCertTypeMap[v] || "";
               setField("certType", code); // 서버용 enum 저장
               setField("certTypeLabel", v); // 화면 표시용
-              if (v !== "선택 발급") {
-                setField("certDetails", []);
-              }
             }}
             name="cert-type"
             legend="발급형태 선택"
@@ -47,20 +42,6 @@ export default function RegiStep2() {
             aria-labelledby="reason-legend"
           />
         </Section>
-        {data.certTypeLabel === "선택 발급" && (
-          <>
-            <OptionSection>
-              <CheckboxList
-                options={CERT_TYPE_DETAILED_OPTION}
-                values={data.certDetails || []}
-                onChange={(v) => setField("certDetails", v)}
-                name="cert-details"
-                legend="포함할 정보 선택"
-                gap={20}
-              />
-            </OptionSection>
-          </>
-        )}
       </FormWrap>
     </ProcessLayout>
   );

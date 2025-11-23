@@ -31,6 +31,9 @@ export const useVoiceModeStore = create((set, get) => ({
 
   captions: [],
 
+  focusTarget: null,
+  sttLocked: false,
+
   // --- Actions: Voice Mode ---
   setEnabled: (v) => set({ enabled: !!v }),
   toggleEnabled: () => set((s) => ({ enabled: !s.enabled })),
@@ -48,6 +51,10 @@ export const useVoiceModeStore = create((set, get) => ({
   setSTTFinal: (text) =>
     set((s) => ({ stt: { ...s.stt, final: String(text || "") } })),
   clearSTT: () => set((s) => ({ stt: { ...s.stt, interim: "", final: "" } })),
+
+  // --- STT 제어 ---
+  lockSTT: () => set({ sttLocked: true }),
+  unlockSTT: () => set({ sttLocked: false }),
 
   // --- Actions: TTS ---
   setTTSSpeaking: (v) => set((s) => ({ tts: { ...s.tts, speaking: !!v } })),
@@ -70,6 +77,10 @@ export const useVoiceModeStore = create((set, get) => ({
     })),
   clearCaptions: () => set({ captions: [] }),
 
+  // --- Actions: Focus ---
+  setFocusTarget: (target) => set({ focusTarget: target || null }),
+  clearFocusTarget: () => set({ focusTarget: null }),
+
   // --- Utils ---
   resetVoiceState: () =>
     set({
@@ -78,5 +89,7 @@ export const useVoiceModeStore = create((set, get) => ({
       stt: { listening: false, interim: "", final: "" },
       tts: { speaking: false, queueLength: 0 },
       captions: [],
+      focusTarget: null,
+      sttLocked: false,
     }),
 }));

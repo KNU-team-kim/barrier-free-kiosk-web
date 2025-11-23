@@ -1,9 +1,33 @@
-// src/services/voiceController.js
 import mcpWS from "./mcpWebSocketClient";
-import { routeByStepName } from "./stepRouter";
-import { injectByStepName } from "./formInjector";
+import { routeByStepName, getPathByStepName } from "./stepRouter";
+import {
+  injectMoveInByStepName,
+  injectRegiCertByStepName,
+} from "./formInjector";
 import { useVoiceModeStore } from "../store/voiceModeStore";
-import { use } from "react";
+
+const FOCUS_TARGET_MAP = {
+  // move-in step 1
+  name: "movein.name",
+  phone_number: "movein.phone_number",
+
+  // move-in step3
+  before_sido: "movein.before_sido",
+  before_sigungu: "movein.before_sigungu",
+
+  // move-in step4
+  after_sido: "movein.after_sido",
+  after_sigungu: "movein.after_sigungu",
+  after_road_name: "movein.after_road_name",
+  after_building_type: "movein.after_building_type",
+  after_building_number_main: "movein.after_building_number_main",
+  after_building_number_sub: "movein.after_building_number_sub",
+  after_detail_address: "movein.after_detail_address",
+  after_sedaeju: "movein.after_sedaeju",
+
+  // regi-cert step 1
+  registration_number: "regi.registration_number",
+};
 
 /**
  * VoiceController (최소 오케스트레이션)
@@ -20,6 +44,8 @@ const voiceController = (() => {
   let enqueueTTS = null;
   let unsubs = [];
 
+  const { setFocusTarget } = useVoiceModeStore.getState();
+
   function _onConnected() {
     const { enabled, setWSConnected, setWSReconnecting } =
       useVoiceModeStore.getState();
@@ -32,7 +58,7 @@ const voiceController = (() => {
     setWSReconnecting(false);
   }
 
-  function _onReconnecting({ delay }) {
+  function _onReconnecting() {
     const { enabled, setWSReconnecting } = useVoiceModeStore.getState();
     if (!enabled) {
       console.log(
@@ -40,7 +66,6 @@ const voiceController = (() => {
       );
     }
     setWSReconnecting(true);
-    // 필요 시 delay 활용 로깅 가능
   }
 
   function _onDisconnected() {
@@ -63,16 +88,54 @@ const voiceController = (() => {
     }
     console.log("[VoiceController] _onMessage:", { message, step_name, data });
 
+    let path = null;
+    if (step_name) {
+      path = getPathByStepName(step_name);
+    }
+
     // 1) 라우팅
-    if (step_name && navigate) {
+    if (step_name && navigate && path) {
       console.log("[VoiceController] routing:", step_name);
       routeByStepName(navigate, step_name);
     }
 
+    // 포커스 타겟 설정 (컴포넌트 마운트를 위해 지연)
+    // Todo: 컴포넌트 마운트 타이밍 이슈로 인해, setTimeout을 사용함으로써 해결. 추후 자세히 정리하기
+    const focusTarget =
+      FOCUS_TARGET_MAP[String(step_name).trim().toLowerCase()];
+    if (focusTarget) {
+      console.log("[VoiceController] setFocusTarget:", focusTarget);
+      // 라우팅이 발생한 경우 컴포넌트 마운트를 위해 약간 지연
+      if (step_name && navigate && path) {
+        // React Router의 navigate는 비동기이므로 다음 렌더 사이클까지 대기
+        setTimeout(() => {
+          setFocusTarget(focusTarget);
+        }, 100);
+      } else {
+        // 이미 같은 페이지에 있는 경우 즉시 설정
+        setFocusTarget(focusTarget);
+      }
+    }
+
     // 2) 폼 주입
-    if (step_name && typeof data !== "undefined") {
-      console.log("[VoiceController] injecting:", step_name, "=>", data);
-      injectByStepName(step_name, data);
+    if (step_name && typeof data !== "undefined" && path) {
+      if (path.startsWith("/move-in/")) {
+        console.log(
+          "[VoiceController] injecting(move-in):",
+          step_name,
+          "=>",
+          data
+        );
+        injectMoveInByStepName(step_name, data);
+      } else if (path.startsWith("/regi-cert/")) {
+        console.log(
+          "[VoiceController] injecting(regi-cert):",
+          step_name,
+          "=>",
+          data
+        );
+        injectRegiCertByStepName(step_name, data);
+      }
     }
 
     // 3) 캡션(시스템)
@@ -102,9 +165,6 @@ const voiceController = (() => {
       unsubs.push(mcpWS.on("disconnected", _onDisconnected));
       unsubs.push(mcpWS.on("error", _onError));
       unsubs.push(mcpWS.on("message", _onMessage));
-
-      // 연결 시작
-      // mcpWS.connect();
     },
 
     // 음성모드 시작
@@ -115,12 +175,35 @@ const voiceController = (() => {
     },
 
     // 음성모드 정지
-    stop() {
+    async stop() {
       const s = useVoiceModeStore.getState();
       s.setEnabled(false);
+
+      // STT 중지
+      try {
+        const stt = (await import("./sttEngine")).default;
+        stt.stop();
+        console.log("[VoiceController] STT stopped");
+      } catch (e) {
+        console.warn("[VoiceController] failed to stop STT:", e);
+      }
+
+      // TTS 중지 및 큐 비우기
+      try {
+        const tts = (await import("./ttsEngine")).default;
+        tts.stopAll();
+        console.log("[VoiceController] TTS stopped");
+      } catch (e) {
+        console.warn("[VoiceController] failed to stop TTS:", e);
+      }
+
+      // WebSocket 연결 종료
       try {
         mcpWS.disconnect();
-      } catch (_) {}
+        console.log("[VoiceController] WebSocket disconnected");
+      } catch {
+        // Ignore disconnect errors
+      }
     },
 
     /**
@@ -130,7 +213,9 @@ const voiceController = (() => {
       unsubs.forEach((off) => {
         try {
           off();
-        } catch (_) {}
+        } catch {
+          // Ignore unsubscribe errors
+        }
       });
       unsubs = [];
       if (disconnect) mcpWS.disconnect();
