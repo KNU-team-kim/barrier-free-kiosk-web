@@ -4,6 +4,7 @@ import styled from "styled-components";
 export default function NumberInput({
   value,
   onChange,
+  onKeyDown,
   placeholder,
   ariaLabel,
   id,
@@ -45,6 +46,7 @@ export default function NumberInput({
     if (e.key === "Backspace" && (value ?? "").length === 0) {
       onBackspaceAtStart?.();
     }
+    onKeyDown?.(e);
   };
   if (suffix) {
     return (
@@ -52,7 +54,7 @@ export default function NumberInput({
         <Input
           ref={attachRef}
           id={id}
-          value={value}
+          value={value ?? ""}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}

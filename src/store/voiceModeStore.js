@@ -32,6 +32,7 @@ export const useVoiceModeStore = create((set, get) => ({
   captions: [],
 
   focusTarget: null,
+  sttLocked: false,
 
   // --- Actions: Voice Mode ---
   setEnabled: (v) => set({ enabled: !!v }),
@@ -50,6 +51,10 @@ export const useVoiceModeStore = create((set, get) => ({
   setSTTFinal: (text) =>
     set((s) => ({ stt: { ...s.stt, final: String(text || "") } })),
   clearSTT: () => set((s) => ({ stt: { ...s.stt, interim: "", final: "" } })),
+
+  // --- STT 제어 ---
+  lockSTT: () => set({ sttLocked: true }),
+  unlockSTT: () => set({ sttLocked: false }),
 
   // --- Actions: TTS ---
   setTTSSpeaking: (v) => set((s) => ({ tts: { ...s.tts, speaking: !!v } })),
@@ -85,5 +90,6 @@ export const useVoiceModeStore = create((set, get) => ({
       tts: { speaking: false, queueLength: 0 },
       captions: [],
       focusTarget: null,
+      sttLocked: false,
     }),
 }));

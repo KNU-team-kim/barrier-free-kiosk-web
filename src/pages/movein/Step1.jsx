@@ -6,10 +6,18 @@ import NumberInput from "../../components/inputs/NumberInput";
 import ProcessLayout from "../../layouts/ProcessLayout";
 import { MOVEIN_STEPS } from "../../features/movein/config";
 import { checkMoveIn } from "../../api/moveIn";
+import { useVoiceModeStore } from "../../store/voiceModeStore";
+import { useEffect, useRef } from "react";
 
 export default function Step1() {
   const navigate = useNavigate();
   const { data, setField, getFullPhone } = useMoveInStore();
+  const focusTarget = useVoiceModeStore((s) => s.focusTarget);
+  const clearFocusTarget = useVoiceModeStore((s) => s.clearFocusTarget);
+
+  // input ref
+  const nameRef = useRef(null);
+  const phone1Ref = useRef(null);
 
   const onNext = async () => {
     const data = await checkValidUser();
@@ -27,6 +35,39 @@ export default function Step1() {
     });
     return res;
   };
+
+  useEffect(() => {
+    if (!focusTarget) return;
+
+    // ref가 준비될 때까지 재시도하는 함수 (최대 3번)
+    const attemptFocus = (ref, maxAttempts = 3, delay = 50) => {
+      let attempts = 0;
+      const tryFocus = () => {
+        if (ref.current) {
+          ref.current.focus();
+          clearFocusTarget(); // 포커스 성공 후에 clearFocusTarget 호출
+          return true;
+        }
+        attempts++;
+        if (attempts < maxAttempts) {
+          setTimeout(tryFocus, delay);
+        } else {
+          // 최대 재시도 횟수 도달 시에도 clearFocusTarget 호출
+          clearFocusTarget();
+        }
+        return false;
+      };
+      tryFocus();
+    };
+
+    if (focusTarget === "movein.name") {
+      console.log("focusing name");
+      attemptFocus(nameRef);
+    } else if (focusTarget === "movein.phone_number") {
+      console.log("focusing phone number");
+      attemptFocus(phone1Ref);
+    }
+  }, [focusTarget, clearFocusTarget]);
 
   return (
     <ProcessLayout
@@ -46,6 +87,7 @@ export default function Step1() {
               value={data.applicantName}
               onChange={(v) => setField("applicantName", v)}
               maxLength={30}
+              ref={nameRef}
             />
           </FieldControl>
         </FieldBlock>
@@ -60,6 +102,7 @@ export default function Step1() {
                 value={data.phone1}
                 onChange={(v) => setField("phone1", v)}
                 maxLength={3}
+                ref={phone1Ref}
               />
               <Dash aria-hidden>-</Dash>
               <NumberInput

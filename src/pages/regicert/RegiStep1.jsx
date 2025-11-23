@@ -8,17 +8,23 @@ import NumericPad from "../../components/inputs/NumericPad";
 import { useEffect, useRef } from "react";
 import { checkRegistration } from "../../api/resident";
 import { useVoiceModeStore } from "../../store/voiceModeStore";
+import voiceController from "../../services/voiceController";
 
 export default function RegiStep1() {
   const navigate = useNavigate();
   const { data, setField, getFullID } = useRegiCertStore();
 
   const onNext = async () => {
-    const data = await checkValidID();
-    if (data) {
-      navigate("../step-2");
+    if (voiceEnabled) {
+      const fullID = getFullID();
+      voiceController.sendUserMessage(fullID);
     } else {
-      alert("유효하지 않은 주민등록번호입니다. 다시 확인해 주세요.");
+      const data = await checkValidID();
+      if (data) {
+        navigate("../step-2");
+      } else {
+        alert("유효하지 않은 주민등록번호입니다. 다시 확인해 주세요.");
+      }
     }
   };
 
@@ -31,21 +37,47 @@ export default function RegiStep1() {
   const frontRef = useRef(null);
   const backRef = useRef(null);
 
+  const voiceEnabled = useVoiceModeStore((s) => s.enabled);
+  const lockSTT = useVoiceModeStore((s) => s.lockSTT);
+  const unlockSTT = useVoiceModeStore((s) => s.unlockSTT);
+
   const focusTarget = useVoiceModeStore((s) => s.focusTarget);
   const clearFocusTarget = useVoiceModeStore((s) => s.clearFocusTarget);
 
   useEffect(() => {
+    if (!voiceEnabled) return;
+    lockSTT();
     // VoiceController에서 registration_number 스텝일 때
     // focusTarget을 'regi.registration_number'로 세팅해줬으므로,
     // 그 신호를 보고 앞자리 input에 포커스
     if (focusTarget === "regi.registration_number") {
-      // 이미 step-1 라우팅이 끝나고 이 컴포넌트가 마운트된 시점이면,
-      // ref가 살아 있으므로 바로 focus 가능
-      frontRef.current?.focus();
-      // 한 번 포커스 주고 나면 플래그는 지워주는 게 깔끔
-      clearFocusTarget();
+      // ref가 준비될 때까지 재시도하는 함수 (최대 3번)
+      const attemptFocus = (ref, maxAttempts = 3, delay = 50) => {
+        let attempts = 0;
+        const tryFocus = () => {
+          if (ref.current) {
+            ref.current.focus();
+            clearFocusTarget(); // 포커스 성공 후에 clearFocusTarget 호출
+            return true;
+          }
+          attempts++;
+          if (attempts < maxAttempts) {
+            setTimeout(tryFocus, delay);
+          } else {
+            // 최대 재시도 횟수 도달 시에도 clearFocusTarget 호출
+            clearFocusTarget();
+          }
+          return false;
+        };
+        tryFocus();
+      };
+      attemptFocus(frontRef);
     }
-  }, [focusTarget, clearFocusTarget]);
+
+    return () => {
+      unlockSTT();
+    };
+  }, [focusTarget, clearFocusTarget, lockSTT, unlockSTT, voiceEnabled]);
 
   const focusByTotalLen = (totalLen) => {
     if (totalLen <= 5) {
@@ -116,6 +148,12 @@ export default function RegiStep1() {
                 onChange={(v) => {
                   const sanitized = (v || "").slice(0, 7);
                   setField("idBack", sanitized);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    console.log("[RegiStep1] Enter pressed on back ID input");
+                    onNext();
+                  }
                 }}
                 onBackspaceAtStart={() => {
                   // 선택: 뒷칸이 비어 있고 백스페이스 → 앞칸으로

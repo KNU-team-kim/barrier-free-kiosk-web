@@ -89,14 +89,21 @@ const stt = (() => {
     },
 
     start() {
-      const { enabled } = useVoiceModeStore.getState();
-      if (!enabled) {
+      const { enabled, sttLocked } = useVoiceModeStore.getState();
+      console.log(
+        "[STT: start]: enabled =",
+        enabled,
+        ", sttLocked =",
+        sttLocked
+      );
+      if (!enabled || sttLocked) {
         console.log("[STT: start] start ignored, voice mode disabled");
         return;
       }
       const r = _ensure();
       if (!r) return false;
       try {
+        console.log("[STT] start()");
         r.start();
         return true;
       } catch {

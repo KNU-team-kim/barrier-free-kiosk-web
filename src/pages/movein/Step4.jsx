@@ -15,7 +15,8 @@ import SelectInput from "../../components/inputs/SelectInput";
 import NumberInput from "../../components/inputs/NumberInput";
 import TextInput from "../../components/inputs/TextInput";
 import RadioList from "../../components/inputs/RadioList";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
+import { useVoiceModeStore } from "../../store/voiceModeStore";
 
 export default function Step4() {
   const navigate = useNavigate();
@@ -30,6 +31,17 @@ export default function Step4() {
     detail,
     sedaeju,
   } = data.newAddr;
+  const focusTarget = useVoiceModeStore((s) => s.focusTarget);
+  const clearFocusTarget = useVoiceModeStore((s) => s.clearFocusTarget);
+
+  const sidoRef = useRef(null);
+  const sigunguRef = useRef(null);
+  const roadNameRef = useRef(null);
+  const buildingTypeRef = useRef(null);
+  const mainBuildingNumberRef = useRef(null);
+  const subBuildingNumberRef = useRef(null);
+  const detailRef = useRef(null);
+  const sedaejuRef = useRef(null);
 
   const onPrev = () => navigate("../step-3");
   const onNext = () => navigate("../step-5");
@@ -45,6 +57,58 @@ export default function Step4() {
     setNewAddrState({ sido: next, sigungu: "" });
   };
   const changeSigungu = (e) => setNewAddrField("sigungu", e.target.value);
+
+  useEffect(() => {
+    if (!focusTarget) return;
+
+    // ref가 준비될 때까지 재시도하는 함수 (최대 3번)
+    const attemptFocus = (ref, maxAttempts = 3, delay = 50) => {
+      let attempts = 0;
+      const tryFocus = () => {
+        if (ref.current) {
+          ref.current.focus();
+          clearFocusTarget(); // 포커스 성공 후에 clearFocusTarget 호출
+          return true;
+        }
+        attempts++;
+        if (attempts < maxAttempts) {
+          setTimeout(tryFocus, delay);
+        } else {
+          // 최대 재시도 횟수 도달 시에도 clearFocusTarget 호출
+          clearFocusTarget();
+        }
+        return false;
+      };
+      tryFocus();
+    };
+
+    if (focusTarget === "movein.after_sido") {
+      attemptFocus(sidoRef);
+    } else if (focusTarget === "movein.after_sigungu") {
+      attemptFocus(sigunguRef);
+    } else if (focusTarget === "movein.after_road_name") {
+      attemptFocus(roadNameRef);
+    } else if (focusTarget === "movein.after_building_type") {
+      attemptFocus(buildingTypeRef);
+    } else if (focusTarget === "movein.after_building_number_main") {
+      attemptFocus(mainBuildingNumberRef);
+    } else if (focusTarget === "movein.after_building_number_sub") {
+      attemptFocus(subBuildingNumberRef);
+    } else if (focusTarget === "movein.after_detail_address") {
+      attemptFocus(detailRef);
+    } else if (focusTarget === "movein.after_sedaeju") {
+      // 현재 포커스된 요소를 blur 처리하여 이전 포커스 제거
+      // RadioList는 div라 focus 못받고, scrollIntoView만으로 이전 포커스 해제 못해서 아래와 같이 blur 처리함
+      if (document.activeElement && document.activeElement !== document.body) {
+        document.activeElement.blur();
+      }
+      // scrollIntoView는 ref가 없어도 동작하므로 바로 실행
+      if (sedaejuRef.current) {
+        sedaejuRef.current.scrollIntoView();
+      }
+      clearFocusTarget();
+    }
+  }, [focusTarget, clearFocusTarget]);
 
   return (
     <ProcessLayout
@@ -63,6 +127,7 @@ export default function Step4() {
             value={sido}
             onChange={changeSido}
             options={sidoOptions}
+            ref={sidoRef}
           />
           <SelectInput
             placeholder="시군구 선택"
@@ -71,6 +136,7 @@ export default function Step4() {
             onChange={changeSigungu}
             options={sigunguOptions}
             disabled={!sido}
+            ref={sigunguRef}
           />
           <TextInput
             placeholder="도로명 입력"
@@ -78,6 +144,7 @@ export default function Step4() {
             onChange={(v) => setNewAddrField("roadName", v)}
             ariaLabel="도로명 주소 입력"
             maxLength={20}
+            ref={roadNameRef}
           />
         </Section>
         <Section>
@@ -88,6 +155,7 @@ export default function Step4() {
             options={Object.values(buildingTypeMap)}
             ariaLabel="건축물 구분 선택"
             placeholder="선택"
+            ref={buildingTypeRef}
           />
         </Section>
         <Section>
@@ -101,12 +169,14 @@ export default function Step4() {
               onChange={(v) => setNewAddrField("mainBuildingNumber", v)}
               ariaLabel="본번"
               maxLength={5}
+              ref={mainBuildingNumberRef}
             />
             <NumberInput
               value={subBuildingNumber}
               onChange={(v) => setNewAddrField("subBuildingNumber", v)}
               ariaLabel="부번"
               maxLength={5}
+              ref={subBuildingNumberRef}
             />
           </TwoCol>
         </Section>
@@ -117,6 +187,7 @@ export default function Step4() {
             onChange={(v) => setNewAddrField("detail", v)}
             ariaLabel="그 외 주소 입력"
             maxLength={20}
+            ref={detailRef}
           />
         </Section>
         <Note>
@@ -136,6 +207,8 @@ export default function Step4() {
             name="household-method"
             legend="세대 구성 방법"
             gap={30}
+            ref={sedaejuRef}
+            isActive={focusTarget === "movein.after_sedaeju"}
           />
         </Section>
       </FormWrap>

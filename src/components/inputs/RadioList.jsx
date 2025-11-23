@@ -8,6 +8,8 @@ export default function RadioList({
   legend,
   gap = 30,
   "aria-labelledby": ariaLabelledBy,
+  ref,
+  isActive = false,
 }) {
   // options가 string 배열이면 {value,label}로 변환
   const items = (options ?? []).map((opt) =>
@@ -17,7 +19,11 @@ export default function RadioList({
   return (
     <Fieldset role="radiogroup" aria-labelledby={ariaLabelledBy}>
       {legend ? <Legend>{legend}</Legend> : null}
-      <List style={{ gap: `${gap}px` }}>
+      <List
+        ref={ref || null}
+        style={{ gap: `${gap}px` }}
+        data-active={isActive ? "true" : "false"}
+      >
         {items.map((opt) => {
           const id = `${name}-${opt.value}`;
           return (
@@ -69,6 +75,11 @@ const Legend = styled.legend`
 
 const List = styled.div`
   display: grid;
+  &[data-active="true"] {
+    border-color: ${({ theme }) => theme.colors.highlight};
+    border-width: 10px;
+    outline: none;
+  }
 `;
 
 // gap, list 정렬을 안정적으로 제어하기 위해 사용

@@ -7,6 +7,25 @@ import {
 import { useVoiceModeStore } from "../store/voiceModeStore";
 
 const FOCUS_TARGET_MAP = {
+  // move-in step 1
+  name: "movein.name",
+  phone_number: "movein.phone_number",
+
+  // move-in step3
+  before_sido: "movein.before_sido",
+  before_sigungu: "movein.before_sigungu",
+
+  // move-in step4
+  after_sido: "movein.after_sido",
+  after_sigungu: "movein.after_sigungu",
+  after_road_name: "movein.after_road_name",
+  after_building_type: "movein.after_building_type",
+  after_building_number_main: "movein.after_building_number_main",
+  after_building_number_sub: "movein.after_building_number_sub",
+  after_detail_address: "movein.after_detail_address",
+  after_sedaeju: "movein.after_sedaeju",
+
+  // regi-cert step 1
   registration_number: "regi.registration_number",
 };
 
@@ -39,7 +58,7 @@ const voiceController = (() => {
     setWSReconnecting(false);
   }
 
-  function _onReconnecting({ delay }) {
+  function _onReconnecting() {
     const { enabled, setWSReconnecting } = useVoiceModeStore.getState();
     if (!enabled) {
       console.log(
@@ -47,7 +66,6 @@ const voiceController = (() => {
       );
     }
     setWSReconnecting(true);
-    // 필요 시 delay 활용 로깅 가능
   }
 
   function _onDisconnected() {
@@ -81,12 +99,22 @@ const voiceController = (() => {
       routeByStepName(navigate, step_name);
     }
 
-    // 포커스 타겟 설정
+    // 포커스 타겟 설정 (컴포넌트 마운트를 위해 지연)
+    // Todo: 컴포넌트 마운트 타이밍 이슈로 인해, setTimeout을 사용함으로써 해결. 추후 자세히 정리하기
     const focusTarget =
       FOCUS_TARGET_MAP[String(step_name).trim().toLowerCase()];
     if (focusTarget) {
       console.log("[VoiceController] setFocusTarget:", focusTarget);
-      setFocusTarget(focusTarget);
+      // 라우팅이 발생한 경우 컴포넌트 마운트를 위해 약간 지연
+      if (step_name && navigate && path) {
+        // React Router의 navigate는 비동기이므로 다음 렌더 사이클까지 대기
+        setTimeout(() => {
+          setFocusTarget(focusTarget);
+        }, 100);
+      } else {
+        // 이미 같은 페이지에 있는 경우 즉시 설정
+        setFocusTarget(focusTarget);
+      }
     }
 
     // 2) 폼 주입
@@ -152,7 +180,9 @@ const voiceController = (() => {
       s.setEnabled(false);
       try {
         mcpWS.disconnect();
-      } catch (_) {}
+      } catch {
+        // Ignore disconnect errors
+      }
     },
 
     /**
@@ -162,7 +192,9 @@ const voiceController = (() => {
       unsubs.forEach((off) => {
         try {
           off();
-        } catch (_) {}
+        } catch {
+          // Ignore unsubscribe errors
+        }
       });
       unsubs = [];
       if (disconnect) mcpWS.disconnect();

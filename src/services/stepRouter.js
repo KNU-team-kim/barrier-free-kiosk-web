@@ -34,7 +34,7 @@ const MAP = {
   type: "/regi-cert/step-2",
   number: "/regi-cert/step-3",
   check: "/regi-cert/step-4",
-  complete_regi_cert: "/regi-cert/complete",
+  complete_resident_registration: "/regi-cert/complete",
 };
 
 /**

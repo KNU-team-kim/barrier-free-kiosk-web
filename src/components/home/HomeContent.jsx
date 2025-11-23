@@ -89,13 +89,13 @@ export default function HomeContent({ onToggleHC, onToggleLarge }) {
 
       <Actions>
         <ActionItem align="right">
-          <Link to="/regi-cert/step-1" aria-label="주민등록등본 발급으로 이동">
+          <Link to="/regi-cert/step-1" aria-label="주민등록초본 발급으로 이동">
             <ActionButton>
               <IconWrap>
                 <IconCircle>🖨️</IconCircle>
               </IconWrap>
               <Label>
-                주민등록등본
+                주민등록초본
                 <br />
                 발급하기
               </Label>

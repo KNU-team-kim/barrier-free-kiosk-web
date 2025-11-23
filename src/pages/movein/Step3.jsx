@@ -3,11 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { MOVEIN_STEPS, SIGUNGU } from "../../features/movein/config";
 import ProcessLayout from "../../layouts/ProcessLayout";
 import { useMoveInStore } from "../../store/moveInStore";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import SelectInput from "../../components/inputs/SelectInput";
 import ActionButton from "../../components/common/ActionButton";
 import LabelText from "../../components/common/LabelText";
 import { getMoveInAddress } from "../../api/moveIn";
+import { useVoiceModeStore } from "../../store/voiceModeStore";
 
 export default function Step3() {
   const navigate = useNavigate();
@@ -15,6 +16,13 @@ export default function Step3() {
     useMoveInStore();
   const { applicantName } = data;
   const { sido, sigungu, loading, result } = data.prevAddr;
+
+  // input ref
+  const sidoRef = useRef(null);
+  const sigunguRef = useRef(null);
+
+  const focusTarget = useVoiceModeStore((s) => s.focusTarget);
+  const clearFocusTarget = useVoiceModeStore((s) => s.clearFocusTarget);
 
   const onNext = () => {
     navigate("../step-4");
@@ -90,6 +98,37 @@ export default function Step3() {
     }
   };
 
+  useEffect(() => {
+    if (!focusTarget) return;
+
+    // ref가 준비될 때까지 재시도하는 함수 (최대 3번)
+    const attemptFocus = (ref, maxAttempts = 3, delay = 50) => {
+      let attempts = 0;
+      const tryFocus = () => {
+        if (ref.current) {
+          ref.current.focus();
+          clearFocusTarget(); // 포커스 성공 후에 clearFocusTarget 호출
+          return true;
+        }
+        attempts++;
+        if (attempts < maxAttempts) {
+          setTimeout(tryFocus, delay);
+        } else {
+          // 최대 재시도 횟수 도달 시에도 clearFocusTarget 호출
+          clearFocusTarget();
+        }
+        return false;
+      };
+      tryFocus();
+    };
+
+    if (focusTarget === "movein.before_sido") {
+      attemptFocus(sidoRef);
+    } else if (focusTarget === "movein.before_sigungu") {
+      attemptFocus(sigunguRef);
+    }
+  }, [focusTarget, clearFocusTarget]);
+
   return (
     <ProcessLayout
       title="이사 전 거주지 정보를 입력해주세요"
@@ -109,6 +148,7 @@ export default function Step3() {
               value={sido}
               onChange={changeSido}
               options={sidoOptions}
+              ref={sidoRef}
             />
             <SelectInput
               placeholder="시군구 선택"
@@ -117,6 +157,7 @@ export default function Step3() {
               onChange={changeSigungu}
               options={sigunguOptions}
               disabled={!sido}
+              ref={sigunguRef}
             />
             <ActionButton onClick={onSearch} disabled={loading}>
               주소 조회
