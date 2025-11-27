@@ -10,7 +10,7 @@ import voiceController from "../../services/voiceController";
 import tts from "../../services/ttsEngine";
 import stt from "../../services/sttEngine";
 
-export default function HomeContent({ onToggleHC, onToggleLarge }) {
+export default function HomeContent({ onToggleHC }) {
   // Theme Mode
   const { mode, setMode } = useThemeMode();
   const isLight = mode === "light";
