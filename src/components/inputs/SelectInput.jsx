@@ -44,8 +44,8 @@ const Select = styled.select`
   font-weight: 500;
   box-sizing: border-box;
 
-  background-color: ${({ theme }) => theme.colors.white};
-  color: ${({ theme }) => theme.colors.deepDark};
+  background-color: ${({ theme }) => theme.colors.inputBoxBackground};
+  color: ${({ theme }) => theme.colors.textContent};
 
   // 기본 화살표 제거
   appearance: none;
@@ -61,7 +61,7 @@ const Select = styled.select`
   &:disabled {
     background-color: ${({ theme }) => theme.colors.label};
     font-weight: 500;
-    color: ${({ theme }) => theme.colors.black};
+    color: ${({ theme }) => theme.colors.textContent};
     cursor: not-allowed;
   }
 

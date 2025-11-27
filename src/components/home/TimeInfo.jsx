@@ -39,7 +39,7 @@ export default function TimeInfo() {
 const TimeInfoBox = styled.div`
   width: fit-content;
   background: transparent;
-  color: ${({ theme }) => theme.colors.deepDark};
+  color: ${({ theme }) => theme.colors.textContent};
 
   display: grid;
   grid-template-rows: auto auto;
@@ -82,5 +82,5 @@ const Period = styled.span`
   font-weight: 400;
   line-height: 1;
   margin-bottom: 10px; /* 살짝 아래로 내려서 baseline 근처 */
-  color: ${({ theme }) => theme.colors.dark};
+  color: ${({ theme }) => theme.colors.highlightSub};
 `;

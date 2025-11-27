@@ -40,8 +40,8 @@ const Input = styled.input`
   font-weight: 500;
   box-sizing: border-box;
 
-  background: ${({ theme }) => theme.colors.white};
-  color: ${({ theme }) => theme.colors.deepDark};
+  background: ${({ theme }) => theme.colors.inputBoxBackground};
+  color: ${({ theme }) => theme.colors.textContent};
   &:focus {
     border-color: ${({ theme }) => theme.colors.highlight};
     border-width: 3px;

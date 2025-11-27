@@ -198,7 +198,7 @@ const Section = styled.section`
 const Subtitle = styled.h2`
   font-size: clamp(38px, 1.4vw, 42px);
   font-weight: 400;
-  color: ${({ theme }) => theme.colors.dark};
+  color: ${({ theme }) => theme.colors.highlightSub};
   margin: 0;
   padding-left: 12px;
   line-height: 1;
@@ -213,7 +213,7 @@ const Column = styled.div`
 const Divider = styled.hr`
   height: 1px;
   border: 0;
-  background: ${({ theme }) => theme.colors.lightGray};
+  ${({ theme }) => theme.colors.highlightNormal};
 `;
 
 const AddressCard = styled.div`
@@ -225,7 +225,7 @@ const AddressValue = styled.div`
   font-size: clamp(40px, 1.6vw, 48px);
   font-weight: 500;
   padding-top: 15px;
-  color: ${({ theme }) => theme.colors.deepDark};
+  color: ${({ theme }) => theme.colors.textContent};
   word-break: keep-all;
   overflow-wrap: anywhere;
 `;

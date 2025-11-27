@@ -106,8 +106,8 @@ const Input = styled.input`
   font-weight: 500;
   box-sizing: border-box;
 
-  background: ${({ theme }) => theme.colors.white};
-  color: ${({ theme }) => theme.colors.deepDark};
+  background: ${({ theme }) => theme.colors.inputBoxBackground};
+  color: ${({ theme }) => theme.colors.textContent};
   text-align: ${({ $align }) => $align};
 
   &:focus {
@@ -124,6 +124,6 @@ const Suffix = styled.span`
   transform: translateY(-50%);
   font-size: clamp(40px, 1.4vw, 44px);
   font-weight: 500;
-  color: ${({ theme }) => theme.colors.deepDark};
+  color: ${({ theme }) => theme.colors.textContent};
   pointer-events: none; /* 클릭 방지 */
 `;

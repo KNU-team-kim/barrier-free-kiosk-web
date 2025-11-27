@@ -146,13 +146,13 @@ const ToolButton = styled.button`
   justify-content: center;
   gap: 5px;
 
-  color: ${({ theme }) => theme.colors.deepDark};
+  color: ${({ theme }) => theme.colors.textContent};
   background: transparent;
-  border: 2px solid ${({ theme }) => theme.colors.dark};
+  border: 2px solid ${({ theme }) => theme.colors.highlightSub};
   border-radius: 24px;
   &[data-active="true"] {
-    color: ${({ theme }) => theme.colors.white};
-    background: ${({ theme }) => theme.colors.dark};
+    color: ${({ theme }) => theme.colors.textHighlight};
+    background: ${({ theme }) => theme.colors.highlightSub};
     border-color: transparent;
   }
 `;
@@ -186,10 +186,10 @@ const ActionButton = styled.button`
   grid-template-rows: auto 1fr;
   gap: 10px;
 
-  border: 1px solid ${({ theme }) => theme.colors.deepDark};
+  border: 1px solid ${({ theme }) => theme.colors.textContent};
   border-radius: 24px;
   background: transparent;
-  color: ${({ theme }) => theme.colors.deepDark};
+  color: ${({ theme }) => theme.colors.textContent};
   font-size: 40px;
   font-weight: 500;
   line-height: 1.2;
@@ -198,7 +198,7 @@ const ActionButton = styled.button`
 
   transition: background 0.2s;
   &:hover {
-    background: ${({ theme }) => theme.colors.lightGray};
+    background: ${({ theme }) => theme.colors.label};
   }
 `;
 
@@ -219,7 +219,7 @@ const IconCircle = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 40px;
-  color: ${({ theme }) => theme.colors.deepDark};
+  color: ${({ theme }) => theme.colors.textContent};
 `;
 
 // 텍스트는 버튼 하단 중앙에
@@ -245,5 +245,5 @@ const Divider = styled.hr`
   margin: 32px 0;
   height: 1px;
   border: 0;
-  background: ${({ theme }) => theme.colors.lightGray};
+  background: ${({ theme }) => theme.colors.label};
 `;

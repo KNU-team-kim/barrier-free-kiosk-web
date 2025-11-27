@@ -60,7 +60,7 @@ const Section = styled.section`
 const Label = styled.label`
   font-size: clamp(38px, 1.6vw, 48px);
   font-weight: 400;
-  color: ${({ theme }) => theme.colors.dark};
+  color: ${({ theme }) => theme.colors.highlightSub};
 `;
 
 const OptionSection = styled.section`

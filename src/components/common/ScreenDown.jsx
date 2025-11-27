@@ -77,8 +77,8 @@ const BigButton = styled.button`
   width: 100%;
   height: 100%;
   border: none;
-  background: ${({ theme }) => theme.colors.dark};
-  color: ${({ theme }) => theme.colors.white};
+  background: ${({ theme }) => theme.colors.belowButton}; // 흰색 15% 투명
+  color: ${({ theme }) => theme.colors.textHighlight}; // 버튼 글자색
   display: flex;
   justify-content: center;
   align-items: center;

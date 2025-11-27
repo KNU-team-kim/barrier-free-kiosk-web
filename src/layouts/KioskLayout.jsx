@@ -42,7 +42,7 @@ const Viewport = styled.div`
   min-height: 100vh;
   display: grid;
   place-items: center;
-  background: ${({ theme }) => theme.colors.deepDark};
+  background: ${({ theme }) => theme.colors.textContent};
 `;
 
 /* 실제 키오스크 스크린 */
@@ -54,6 +54,6 @@ const Screen = styled.section`
     flipped ? "1fr 1220px" : "1220px 1fr"};
   gap: 16px;
   box-sizing: border-box;
-  background: var(--color-bg, ${({ theme }) => theme.colors.background});
-  color: var(--color-fg, ${({ theme }) => theme.colors.white});
+  color: ${({ theme }) => theme.colors.textContent};
+  background: ${({ theme }) => theme.colors.background};
 `;
