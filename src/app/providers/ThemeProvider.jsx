@@ -56,7 +56,12 @@ export default function ThemeProvider({ children }) {
 
   return (
     <ThemeModeContext.Provider value={value}>
-      <StyledProvider theme={themes[mode]}>
+      <StyledProvider
+        theme={{
+          ...themes[mode],
+          mode,
+        }}
+      >
         <GlobalStyle />
         {children}
       </StyledProvider>

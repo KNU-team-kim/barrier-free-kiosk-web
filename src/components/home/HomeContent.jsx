@@ -117,7 +117,7 @@ export default function HomeContent({ onToggleHC }) {
         </ActionItem>
       </Actions>
 
-      <InfoCard role="region" aria-label="공공정보 - 날씨"></InfoCard>
+      {/* <InfoCard role="region" aria-label="공공정보 - 날씨"></InfoCard> */}
     </HomeWrap>
   );
 }

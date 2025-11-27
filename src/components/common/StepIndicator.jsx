@@ -67,8 +67,14 @@ const Badge = styled.span`
   background: ${({ theme }) => theme.colors.textSub};
   color: ${({ theme }) => theme.colors.textHighlight};
   &[data-active="true"] {
-    background: ${({ theme }) => theme.colors.textContent};
-    color: ${({ theme }) => theme.colors.textHighlight};
+    background: ${({ theme }) =>
+      theme.mode === "high"
+        ? theme.colors.textHighlight
+        : theme.colors.textContent};
+    color: ${({ theme }) =>
+      theme.mode === "high"
+        ? theme.colors.textContent
+        : theme.colors.textHighlight};
   }
 `;
 
@@ -84,6 +90,9 @@ const Label = styled.span`
 
   color: ${({ theme }) => theme.colors.textSub};
   &[data-active="true"] {
-    color: ${({ theme }) => theme.colors.textContent};
+    color: ${({ theme }) =>
+      theme.mode === "high"
+        ? theme.colors.textHighlight
+        : theme.colors.textContent};
   }
 `;
