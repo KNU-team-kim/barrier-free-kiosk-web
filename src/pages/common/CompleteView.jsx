@@ -31,7 +31,7 @@ const Container = styled.div`
 const Title = styled.h1`
   font-size: clamp(42px, 3vw, 64px);
   font-weight: 500;
-  color: ${({ theme }) => theme.colors.dark};
+  color: ${({ theme }) => theme.colors.highlightSub};
   text-align: center;
   margin: 0;
 `;
@@ -54,6 +54,6 @@ const HomeButton = styled.button`
   font-size: clamp(32px, 1.8vw, 42px);
 
   background: ${({ theme }) => theme.colors.highlight};
-  color: ${({ theme }) => theme.colors.white};
+  color: ${({ theme }) => theme.colors.textHighlight};
   cursor: pointer;
 `;

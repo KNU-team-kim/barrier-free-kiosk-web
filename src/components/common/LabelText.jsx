@@ -15,7 +15,7 @@ const Label = styled.div`
   justify-self: start;
 
   background-color: ${({ theme }) => theme.colors.label};
-  color: ${({ theme }) => theme.colors.dark};
+  color: ${({ theme }) => theme.colors.textCaption};
 
   font-size: clamp(38px, 1.4vw, 42px);
   font-weight: 400;

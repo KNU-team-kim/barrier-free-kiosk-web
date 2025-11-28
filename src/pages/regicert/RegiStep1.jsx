@@ -187,7 +187,7 @@ const FieldBlock = styled.div`
 const FieldLabel = styled.label`
   font-size: clamp(38px, 1.6vw, 48px);
   font-weight: 400;
-  color: ${({ theme }) => theme.colors.dark};
+  color: ${({ theme }) => theme.colors.highlightSub};
 `;
 
 const FieldControl = styled.div`
@@ -202,7 +202,7 @@ const IDRow = styled.div`
 `;
 
 const Dash = styled.span`
-  color: ${({ theme }) => theme.colors.dark};
+  color: ${({ theme }) => theme.colors.highlightSub};
   font-size: clamp(48px, 2vw, 64px);
   line-height: 1;
 `;

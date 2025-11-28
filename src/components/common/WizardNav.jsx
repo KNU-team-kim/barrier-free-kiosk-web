@@ -91,8 +91,8 @@ const HomeButton = styled.button`
   font-weight: 400;
 
   background: transparent;
-  color: ${({ theme }) => theme.colors.deepDark};
-  border: 1px solid ${({ theme }) => theme.colors.dark};
+  color: ${({ theme }) => theme.colors.textContent};
+  border: 1px solid ${({ theme }) => theme.colors.highlightSub};
 `;
 
 const PrimaryButton = styled.button`
@@ -107,8 +107,8 @@ const PrimaryButton = styled.button`
   font-weight: 400;
   font-size: clamp(38px, 1.8vw, 42px);
 
-  background: ${({ theme }) => theme.colors.dark};
-  color: ${({ theme }) => theme.colors.white};
+  background: ${({ theme }) => theme.colors.highlightSub};
+  color: ${({ theme }) => theme.colors.textHighlight};
 `;
 
 const CompleteButton = styled.button`
@@ -124,7 +124,7 @@ const CompleteButton = styled.button`
   font-size: clamp(38px, 1.8vw, 42px);
 
   background: ${({ theme }) => theme.colors.highlight};
-  color: ${({ theme }) => theme.colors.white};
+  color: ${({ theme }) => theme.colors.textHighlight};
 `;
 
 const VoiceExitButton = styled.button`
@@ -139,5 +139,5 @@ const VoiceExitButton = styled.button`
   font-weight: 400;
   font-size: clamp(38px, 1.8vw, 42px);
   background: ${({ theme }) => theme.colors.highlight};
-  color: ${({ theme }) => theme.colors.white};
+  color: ${({ theme }) => theme.colors.textHighlight};
 `;

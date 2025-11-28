@@ -12,8 +12,8 @@ const GlobalStyle = createGlobalStyle`
   body {
     font-family: 'Segoe UI', Roboto, sans-serif;
     line-height: 1.5;
-    background-color: ${({ theme }) => theme.colors.bg};
-    color: ${({ theme }) => theme.colors.fg};
+    background-color: ${({ theme }) => theme.colors.background};
+    color: ${({ theme }) => theme.colors.textContent};
   }
 
   /* 이미지, 비디오 기본 리셋 */
@@ -24,7 +24,7 @@ const GlobalStyle = createGlobalStyle`
 
   /* 접근성: 포커스가 잘 보이게 */
   :focus {
-    outline: 3px solid ${({ theme }) => theme.colors.primary};
+    outline: 3px solid ${({ theme }) => theme.colors.highlight};
     outline-offset: 2px;
   }
 `;

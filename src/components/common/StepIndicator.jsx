@@ -45,10 +45,10 @@ const Item = styled.li`
   min-width: 0; // 내부 줄바꿈 허용
 
   background: transparent;
-  color: ${({ theme }) => theme.colors.gray};
+  color: ${({ theme }) => theme.colors.textSub};
   &[data-active="true"] {
-    background: ${({ theme }) => theme.colors.lightGray};
-    color: ${({ theme }) => theme.colors.black};
+    background: ${({ theme }) => theme.colors.navigation};
+    color: ${({ theme }) => theme.colors.textContent};
   }
 `;
 
@@ -64,11 +64,17 @@ const Badge = styled.span`
   text-align: center;
   font-variant-numeric: tabular-nums; // 숫자 자폭 균일
 
-  background: ${({ theme }) => theme.colors.gray};
-  color: ${({ theme }) => theme.colors.white};
+  background: ${({ theme }) => theme.colors.textSub};
+  color: ${({ theme }) => theme.colors.textHighlight};
   &[data-active="true"] {
-    background: ${({ theme }) => theme.colors.black};
-    color: ${({ theme }) => theme.colors.white};
+    background: ${({ theme }) =>
+      theme.mode === "high"
+        ? theme.colors.textHighlight
+        : theme.colors.textContent};
+    color: ${({ theme }) =>
+      theme.mode === "high"
+        ? theme.colors.textContent
+        : theme.colors.textHighlight};
   }
 `;
 
@@ -82,8 +88,11 @@ const Label = styled.span`
 
   min-width: 0;
 
-  color: ${({ theme }) => theme.colors.gray};
+  color: ${({ theme }) => theme.colors.textSub};
   &[data-active="true"] {
-    color: ${({ theme }) => theme.colors.black};
+    color: ${({ theme }) =>
+      theme.mode === "high"
+        ? theme.colors.textHighlight
+        : theme.colors.textContent};
   }
 `;
