@@ -49,7 +49,7 @@ export default function RegiStep4() {
           <LabelText>수수료 납부</LabelText>
           <DetailContent>
             <Subtitle>총 수수료</Subtitle>
-            <Content>{(data.copies || 0) * 200} 원</Content>
+            <Content>4000 원</Content>
           </DetailContent>
         </Section>
       </FormWrap>
