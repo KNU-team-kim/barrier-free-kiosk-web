@@ -34,7 +34,7 @@ const themes = {
       highlightSub: "#FFF982",
       highlightNormal: "#FFF982",
       textContent: "#FFF200",
-      textCaption: "#FFF982",
+      textCaption: "#000000",
       textSub: "#FFF982",
       textHighlight: "#000000",
       label: "#FFF982",

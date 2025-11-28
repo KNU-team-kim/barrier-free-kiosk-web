@@ -38,7 +38,10 @@ const Select = styled.select`
   width: 100%;
   padding: 30px 24px;
   outline: none;
-  border: 3px solid transparent;
+  // border: 3px solid transparent;
+  border: 3px solid
+    ${({ theme }) =>
+      theme.mode === "high" ? theme.colors.highlight : "transparent"};
   border-radius: 24px;
   font-size: clamp(40px, 1.4vw, 44px);
   font-weight: 500;
@@ -53,13 +56,19 @@ const Select = styled.select`
   -moz-appearance: none;
 
   // 커스텀 화살표 (SVG 삽입)
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-image: ${({ theme }) => {
+    const arrowColor = theme.colors.textContent.replace("#", "%23");
+    return `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='${arrowColor}' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>")`;
+  }};
   background-repeat: no-repeat;
   background-position: right 24px center; // 오른쪽 여백
   background-size: 32px 32px; // 화살표 크기
+  background-color: ${({ theme }) =>
+    theme.mode === "high" ? "transparent" : theme.colors.inputBox};
 
   &:disabled {
-    background-color: ${({ theme }) => theme.colors.label};
+    background-color: ${({ theme }) =>
+      theme.mode === "high" ? "transparent" : theme.colors.label};
     font-weight: 500;
     color: ${({ theme }) => theme.colors.textContent};
     cursor: not-allowed;

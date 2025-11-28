@@ -28,7 +28,7 @@ const Button = styled.button`
   box-sizing: border-box;
 
   background-color: ${({ theme }) => theme.colors.highlight};
-  color: ${({ theme }) => theme.colors.textContent};
+  color: ${({ theme }) => theme.colors.textHighlight};
 
   display: flex;
   align-items: center;
