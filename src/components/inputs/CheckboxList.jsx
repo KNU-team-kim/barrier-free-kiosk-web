@@ -99,7 +99,7 @@ const CheckboxInput = styled.input`
   -moz-appearance: none;
   width: 40px;
   height: 40px;
-  border: 2px solid ${({ theme }) => theme.colors.lightGray};
+  border: 2px solid ${({ theme }) => theme.colors.highlightNormal};
   border-radius: 8px;
   background-color: transparent;
   cursor: pointer;
@@ -132,7 +132,7 @@ const Label = styled.label`
   display: inline-block;
   margin-top: -3px; // line-height때문에 checkbox랑 살짝 안맞음.
   font-size: clamp(40px, 1.4vw, 48px);
-  color: ${({ theme }) => theme.colors.dark};
+  color: ${({ theme }) => theme.colors.highlightSub};
   line-height: 1.3;
   white-space: normal; // 줄바꿈 허용
   overflow-wrap: break-word; // 단어 단위로 줄바꿈

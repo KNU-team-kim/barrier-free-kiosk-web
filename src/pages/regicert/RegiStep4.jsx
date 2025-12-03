@@ -77,7 +77,7 @@ const DetailContent = styled.div`
 const Subtitle = styled.h2`
   font-size: clamp(38px, 1.4vw, 42px);
   font-weight: 400;
-  color: ${({ theme }) => theme.colors.dark};
+  color: ${({ theme }) => theme.colors.highlightSub};
   margin: 0;
   padding-left: 12px;
   line-height: 1;
@@ -86,7 +86,7 @@ const Subtitle = styled.h2`
 const Content = styled.div`
   font-size: clamp(40px, 1.2vw, 44px);
   font-weight: 400;
-  color: ${({ theme }) => theme.colors.deepDark};
+  color: ${({ theme }) => theme.colors.textContent};
   padding-left: 12px;
   line-height: 1;
 `;
@@ -94,5 +94,5 @@ const Content = styled.div`
 const Divider = styled.hr`
   height: 1px;
   border: 0;
-  background: ${({ theme }) => theme.colors.lightGray};
+  background: ${({ theme }) => theme.colors.highlightNormal};
 `;

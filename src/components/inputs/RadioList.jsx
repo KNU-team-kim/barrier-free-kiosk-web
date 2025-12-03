@@ -108,13 +108,13 @@ const RadioInput = styled.input`
   width: 40px;
   height: 40px;
 
-  border: 1px solid ${({ theme }) => theme.colors.lightGray};
+  border: 1px solid ${({ theme }) => theme.colors.highlightNormal};
   border-radius: 50%;
   background-color: transparent;
   cursor: pointer;
   outline: none;
   &:checked {
-    border: 1px solid ${({ theme }) => theme.colors.lightGray};
+    border: 1px solid ${({ theme }) => theme.colors.highlightNormal};
     accent-color: ${({ theme }) => theme.colors.highlight};
   }
 `;
@@ -127,7 +127,7 @@ const Label = styled.label`
   display: inline-block;
   font-size: clamp(40px, 1.5vw, 48px);
   font-weight: 400;
-  color: ${({ theme }) => theme.colors.dark};
+  color: ${({ theme }) => theme.colors.highlightSub};
   line-height: 1.3;
   word-break: keep-all;
   overflow-wrap: anywhere;

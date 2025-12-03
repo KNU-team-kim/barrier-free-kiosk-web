@@ -45,8 +45,8 @@ const Row = styled.div`
 `;
 
 const KeyButton = styled.button`
-  background: ${({ theme }) => theme.colors.gray};
-  color: ${({ theme }) => theme.colors.white};
+  background: ${({ theme }) => theme.colors.textSub};
+  color: ${({ theme }) => theme.colors.textHighlight};
   font-size: 40px;
   font-weight: 500;
   border: none;
@@ -58,12 +58,12 @@ const KeyButton = styled.button`
 
   &[data-type="del"] {
     background: transparent;
-    color: ${({ theme }) => theme.colors.gray};
-    border: 2px solid ${({ theme }) => theme.colors.gray};
+    color: ${({ theme }) => theme.colors.textSub};
+    border: 2px solid ${({ theme }) => theme.colors.textSub};
   }
 
   &:active {
-    background: ${({ theme }) => theme.colors.dark};
+    background: ${({ theme }) => theme.colors.highlightSub};
   }
 `;
 

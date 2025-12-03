@@ -230,7 +230,7 @@ const Section = styled.section`
 const Subtitle = styled.h2`
   font-size: clamp(38px, 1.4vw, 42px);
   font-weight: 400;
-  color: ${({ theme }) => theme.colors.dark};
+  color: ${({ theme }) => theme.colors.highlightSub};
   margin: 0;
   padding-left: 12px;
   line-height: 1;
@@ -251,7 +251,7 @@ const TwoCol = styled.div`
 
 const Note = styled.div`
   font-size: clamp(36px, 1.1vw, 42px);
-  color: ${({ theme }) => theme.colors.gray};
+  color: ${({ theme }) => theme.colors.textSub};
   line-height: 1.2;
   padding-left: 12px;
   word-break: keep-all;
@@ -261,5 +261,5 @@ const Note = styled.div`
 const Divider = styled.hr`
   height: 1px;
   border: 0;
-  background: ${({ theme }) => theme.colors.lightGray};
+  background: ${({ theme }) => theme.colors.highlightNormal};
 `;
